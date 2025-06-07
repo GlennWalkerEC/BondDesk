@@ -6,4 +6,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\BondDesk.Domain\BondDesk.Domain.csproj" />
+  </ItemGroup>
+
 </Project>

@@ -6,4 +6,9 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\BondDesk.Domain\BondDesk.Domain.csproj" />
+    <ProjectReference Include="..\BondDesk.QuoteProvider\BondDesk.QuoteProvider.csproj" />
+  </ItemGroup>
+
 </Project>
