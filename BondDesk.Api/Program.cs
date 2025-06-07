@@ -18,7 +18,7 @@ builder.Services.AddSwaggerGen(c =>
 });
 
 builder.Services.AddScoped<IGiltsService, GiltsService>();
-builder.Services.AddScoped<IGiltRepo, GiltSymbols>();
+builder.Services.AddScoped<IGiltRepo, Gilts>();
 builder.Services.AddScoped<IQuoteRepo, LseQuoteRepo>();
 
 var app = builder.Build();

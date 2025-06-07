@@ -1,5 +1,7 @@
+using BondDesk.Domain.Entities;
 using BondDesk.Domain.Interfaces.Models;
 using BondDesk.Domain.Interfaces.Repos;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace BondDesk.Domain.Entities;
 
@@ -15,9 +17,21 @@ public class Bond : IGiltInfo
 	}
 
 	public string? Name => _giltInfo.Name;
-	public decimal? Coupon => _giltInfo.Coupon;
+	public decimal? Coupon => _giltInfo.Coupon / 100;
 	public DateTime? Maturity => _giltInfo.Maturity;
 	public string Epic => _giltInfo.Epic ?? throw new InvalidOperationException("Epic cannot be null.");
+
+	public decimal? LastPrice => GetLastPriceAsync().Result;
+
+	public decimal? RunningYield => CalculateRunningYield();
+	public decimal? CalculateRunningYield()
+	{	
+		if (Coupon.HasValue && LastPrice.HasValue && LastPrice.Value != 0)
+		{
+			return Coupon.Value * 100 / LastPrice.Value * 100;
+		}
+		return null;
+	}
 
 	public async Task<IBondQuoteData> GetQuoteAsync()
 	{
