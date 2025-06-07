@@ -1,0 +1,59 @@
+﻿@page "/"
+
+@using System.Net.Http.Json
+@inject HttpClient Http
+
+<h3>Gilts (UK Government Bonds)</h3>
+
+@if (gilts == null)
+{
+    <p>Loading...</p>
+}
+else if (!gilts.Any())
+{
+    <p>No gilts found.</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Epic</th>
+                <th>Coupon (%)</th>
+                <th>Maturity</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var bond in gilts)
+            {
+                <tr>
+                    <td>@bond.Name</td>
+                    <td>@bond.Epic</td>
+                    <td>@(bond.Coupon * 100)</td>
+                    <td>@bond.Maturity?.ToString("yyyy-MM-dd")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<BondDto>? gilts;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Set a longer timeout (e.g., 2 minutes)
+        Http.Timeout = TimeSpan.FromMinutes(2);
+
+        gilts = await Http.GetFromJsonAsync<List<BondDto>>("http://localhost:5296/api/Bond");
+    }
+
+    public class BondDto
+    {
+        public string? Name { get; set; }
+        public string Epic { get; set; } = default!;
+        public decimal? Coupon { get; set; }
+        public DateTime? Maturity { get; set; }
+    }
+}
