@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 
 namespace Portfolio.QuoteProvider.Models;
 
-internal class Refinitive : IBondData
+internal class Refinitive : IBondQuoteData
 {
     [JsonPropertyName("assetclass")]
     public string? AssetClass { get; set; }

@@ -2,11 +2,11 @@ using BondDesk.Domain.Interfaces.Models;
 
 namespace Portfolio.QuoteProvider.Models;
 
-internal class BondData : IBondData
+internal class BondQuoteData : IBondQuoteData
 {
-    private readonly IBondData _innerBond;
+    private readonly IBondQuoteData _innerBond;
 
-    public BondData(IBondData bond)
+    public BondQuoteData(IBondQuoteData bond)
     {
         _innerBond = bond;
     }

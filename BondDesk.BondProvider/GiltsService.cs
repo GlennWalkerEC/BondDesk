@@ -1,30 +1,25 @@
-﻿using BondDesk.Domain.Interfaces;
-using Portfolio.Domain.Interfaces;
-using Portfolio.QuoteProvider.Models;
+﻿using BondDesk.Domain.Entities;
+using BondDesk.Domain.Interfaces.Repos;
+using BondDesk.Domain.Interfaces.Services;
 
 namespace BondDesk.BondProvider;
 
-public class GiltsService
+public class GiltsService : IGiltsService
 {
 	protected readonly IQuoteRepo _lseRepo;
-	protected readonly IBondSymbolRepo _symbolRepo;
+	protected readonly IGiltRepo _giltRepo;
 
-	public GiltsService(IQuoteRepo lseRepo, IBondSymbolRepo symbolRepo)
+	public GiltsService(IQuoteRepo lseRepo, IGiltRepo giltRepo)
 	{
 		_lseRepo = lseRepo ?? throw new ArgumentNullException(nameof(lseRepo));
-		_symbolRepo = symbolRepo ?? throw new ArgumentNullException(nameof(symbolRepo));
+		_giltRepo = giltRepo ?? throw new ArgumentNullException(nameof(giltRepo));
 	}
 
 	public async IAsyncEnumerable<Bond> GetGiltsAsync()
 	{
-		foreach (var symbol in _symbolRepo.GetAllSymbols())
+		foreach (var giltInfo in _giltRepo.GetAllGilts())
 		{
-			var valuation = await _lseRepo.BondValuation(symbol);
-			if (valuation == null)
-			{
-				continue;
-			}
-			yield return new Bond(valuation);
+			yield return new Bond(_lseRepo, giltInfo);
 		}
 	}
 }

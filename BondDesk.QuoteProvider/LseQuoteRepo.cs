@@ -1,5 +1,5 @@
 ﻿using BondDesk.Domain.Interfaces.Models;
-using Portfolio.Domain.Interfaces;
+using BondDesk.Domain.Interfaces.Repos;
 using Portfolio.QuoteProvider.Models;
 using System.Diagnostics;
 
@@ -14,7 +14,7 @@ public class LseQuoteRepo : IQuoteRepo
 		client ??= new HttpClient();
 	}
 
-	public async Task<IBondData> BondValuation(string symbol)
+	public async Task<IBondQuoteData> BondValuation(string symbol)
 	{
 		try
 		{

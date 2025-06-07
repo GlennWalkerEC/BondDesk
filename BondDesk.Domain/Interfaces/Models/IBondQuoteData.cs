@@ -1,6 +1,6 @@
 ﻿namespace BondDesk.Domain.Interfaces.Models;
 
-public interface IBondData
+public interface IBondQuoteData
 {
     string? AssetClass { get; }
     decimal? Bid { get; }

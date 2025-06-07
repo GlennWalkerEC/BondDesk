@@ -1,16 +1,36 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using BondDesk.Domain.Entities;
+using BondDesk.Domain.Interfaces.Repos;
+using BondDesk.Domain.Interfaces.Services;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace BondDesk.Api.Controllers;
-public class BondController : Controller
+
+[ApiController]
+[Route("api/[controller]")]
+public class BondController : ControllerBase
 {
-	public ActionResult Index()
+	private readonly IGiltsService _giltsService;
+
+	public BondController(IGiltsService giltsService)
 	{
-		return View();
+		_giltsService = giltsService ?? throw new NullReferenceException(nameof(giltsService));
 	}
 
-	public ActionResult Create()
+	/// <summary>
+	/// Gets all gilts (UK government bonds).
+	/// </summary>
+	/// <returns>A list of Bond objects.</returns>
+	[HttpGet]
+	[SwaggerOperation(Summary = "Get all gilts", Description = "Returns a list of all UK government bonds (gilts).")]
+	[ProducesResponseType(typeof(IEnumerable<Bond>), 200)]
+	public async Task<ActionResult<IEnumerable<Bond>>> GetAllGilts()
 	{
-		return View();
+		var gilts = new List<Bond>();
+		await foreach (var bond in _giltsService.GetGiltsAsync())
+		{
+			gilts.Add(bond);
+		}
+		return Ok(gilts);
 	}
 }
