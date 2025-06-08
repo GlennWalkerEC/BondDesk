@@ -22,6 +22,13 @@ else
                 <th>Epic</th>
                 <th>Coupon (%)</th>
                 <th>Maturity</th>
+                <th>Face Value</th>
+                <th>Tenor</th>
+                <th>Days Since Last Coupon</th>
+                <th>Last Price</th>
+                <th>Dirty Price</th>
+                <th>Running Yield</th>
+                <th>Yield To Maturity</th>
             </tr>
         </thead>
         <tbody>
@@ -30,8 +37,15 @@ else
                 <tr>
                     <td>@bond.Name</td>
                     <td>@bond.Epic</td>
-                    <td>@(bond.Coupon * 100)</td>
-                    <td>@bond.Maturity?.ToString("yyyy-MM-dd")</td>
+                    <td>@((bond.Coupon * 100).ToString("F4"))</td>
+                    <td>@bond.Maturity.ToString("yyyy-MM-dd")</td>
+                    <td>@bond.FaceValue.ToString("F4")</td>
+                    <td>@bond.Tenor.ToString("F4")</td>
+                    <td>@bond.DaysSinceLastCoupon.ToString("F4")</td>
+                    <td>@bond.LastPrice.ToString("F4")</td>
+                    <td>@bond.DirtyPrice.ToString("F4")</td>
+                    <td>@bond.RunningYield.ToString("F4")</td>
+                    <td>@bond.YieldToMaturity.ToString("F4")</td>
                 </tr>
             }
         </tbody>
@@ -51,9 +65,16 @@ else
 
     public class BondDto
     {
-        public string? Name { get; set; }
+        public string Name { get; set; } = default!;
         public string Epic { get; set; } = default!;
-        public decimal? Coupon { get; set; }
-        public DateTime? Maturity { get; set; }
+        public decimal Coupon { get; set; }
+        public DateTime Maturity { get; set; }
+        public decimal FaceValue { get; set; }
+        public decimal Tenor { get; set; } = default!;
+        public decimal DaysSinceLastCoupon { get; set; }
+        public decimal LastPrice { get; set; }
+        public decimal DirtyPrice { get; set; }
+        public decimal RunningYield { get; set; }
+        public decimal YieldToMaturity { get; set; }
     }
 }

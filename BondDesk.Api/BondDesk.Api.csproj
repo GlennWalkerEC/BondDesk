@@ -13,6 +13,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\BondDesk.BondProvider\BondDesk.BondProvider.csproj" />
+    <ProjectReference Include="..\BondDesk.DateTime\BondDesk.DateTime.csproj" />
+    <ProjectReference Include="..\BondDesk.DateTime\BondDesk.DateTimeProvider.csproj" />
     <ProjectReference Include="..\BondDesk.Domain\BondDesk.Domain.csproj" />
     <ProjectReference Include="..\BondDesk.GiltsInIssueRepo\BondDesk.GiltsInIssueRepo.csproj" />
   </ItemGroup>

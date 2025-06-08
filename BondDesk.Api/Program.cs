@@ -1,14 +1,26 @@
 using BondDesk.BondProvider;
+using BondDesk.DateTimeProvider;
+using BondDesk.Domain.Interfaces.Providers;
 using BondDesk.Domain.Interfaces.Repos;
 using BondDesk.Domain.Interfaces.Services;
 using BondDesk.GiltsInIssueRepo;
+using BondDesk.QuoteProvider;
 using Microsoft.OpenApi.Models;
-using Portfolio.QuoteProvider;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllers();
+
+// Add CORS policy
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowBlazorClient",
+        policy => policy
+            .WithOrigins("http://localhost:5084")
+            .AllowAnyHeader()
+            .AllowAnyMethod());
+});
 
 // Add Swagger/OpenAPI support
 builder.Services.AddEndpointsApiExplorer();
@@ -19,7 +31,8 @@ builder.Services.AddSwaggerGen(c =>
 
 builder.Services.AddScoped<IGiltsService, GiltsService>();
 builder.Services.AddScoped<IGiltRepo, Gilts>();
-builder.Services.AddScoped<IQuoteRepo, LseQuoteRepo>();
+builder.Services.AddSingleton<IQuoteRepo, CachedRepo>();
+builder.Services.AddScoped<IDateTimeProvider, SimpleDateTimeProvider>();
 
 var app = builder.Build();
 
@@ -36,6 +49,9 @@ if (app.Environment.IsDevelopment())
 		});
 	}
 }
+
+// Enable CORS before authorization
+app.UseCors("AllowBlazorClient");
 
 app.UseAuthorization();
 

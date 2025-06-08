@@ -3,6 +3,7 @@ using BondDesk.Domain.Interfaces.Repos;
 using BondDesk.Domain.Interfaces.Services;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
+using BondDesk.Api.Models;
 
 namespace BondDesk.Api.Controllers;
 
@@ -20,16 +21,29 @@ public class BondController : ControllerBase
 	/// <summary>
 	/// Gets all gilts (UK government bonds).
 	/// </summary>
-	/// <returns>A list of Bond objects.</returns>
+	/// <returns>A list of BondDTO objects.</returns>
 	[HttpGet]
 	[SwaggerOperation(Summary = "Get all gilts", Description = "Returns a list of all UK government bonds (gilts).")]
-	[ProducesResponseType(typeof(IEnumerable<Bond>), 200)]
-	public async Task<ActionResult<IEnumerable<Bond>>> GetAllGilts()
+	[ProducesResponseType(typeof(IEnumerable<BondDTO>), 200)]
+	public async Task<ActionResult<IEnumerable<BondDTO>>> GetAllGilts()
 	{
-		var gilts = new List<Bond>();
+		var gilts = new List<BondDTO>();
 		await foreach (var bond in _giltsService.GetGiltsAsync())
 		{
-			gilts.Add(bond);
+			gilts.Add(new BondDTO
+			{
+				Epic = bond.Epic,
+				Name = bond.Name,
+				Coupon = bond.Coupon,
+				Maturity = bond.Maturity,
+				FaceValue = bond.FaceValue,
+				Tenor = bond.Tenor,
+				DaysSinceLastCoupon = bond.DaysSinceLastCoupon,
+				LastPrice = bond.LastPrice,
+				DirtyPrice = bond.DirtyPrice,
+				RunningYield = bond.RunningYield,
+				YieldToMaturity = bond.YieldToMaturity
+			});
 		}
 		return Ok(gilts);
 	}
