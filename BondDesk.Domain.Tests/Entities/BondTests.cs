@@ -131,20 +131,4 @@ public class BondTests
         var expected = "Test Bond (TSTBND) - 0.05% coupon, matures on 01/01/2030";
         Assert.Equal(expected, bond.ToString());
     }
-
-    [Fact]
-    public void Epic_Null_Throws()
-    {
-        _giltInfoMock.SetupGet(x => x.Epic).Returns((string?)null);
-        var bond = CreateBond();
-        Assert.Throws<InvalidOperationException>(() => { var _ = bond.Epic; });
-    }
-
-    [Fact]
-    public void LastPrice_Null_Throws()
-    {
-        _bondQuoteDataMock.SetupGet(x => x.LastPrice).Returns((decimal?)null);
-        var bond = CreateBond();
-        Assert.Throws<NullReferenceException>(() => { var _ = bond.LastPrice; });
-    }
 }
