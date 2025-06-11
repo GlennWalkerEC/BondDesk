@@ -8,5 +8,6 @@ public interface IGiltInfo
 	string Epic { get; }
     string Name { get; }
     decimal Coupon { get; }
-    DateTime Maturity { get; }
+    DateTime MaturityDate { get; }
+	public DateTime IssueDate { get; }
 }

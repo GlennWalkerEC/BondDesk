@@ -11,13 +11,15 @@ internal class GiltInfo : IGiltInfo
     public string Epic { get; set; }
     public string Name { get; set; }
     public decimal Coupon { get; set; }
-    public DateTime Maturity { get; set; }
+    public DateTime MaturityDate { get; set; }
+    public DateTime IssueDate { get; }
 
-    public GiltInfo(string epic, string name, decimal coupon, DateTime maturity)
+    public GiltInfo(string epic, string name, decimal coupon, DateTime maturity, DateTime issueDate)
     {
         Epic = epic;
         Name = name;
         Coupon = coupon;
-        Maturity = maturity;
+        MaturityDate = maturity;
+        IssueDate = issueDate;
     }
 }

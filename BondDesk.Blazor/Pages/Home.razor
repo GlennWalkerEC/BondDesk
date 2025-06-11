@@ -29,6 +29,8 @@ else
                 <th>Dirty Price</th>
                 <th>Running Yield</th>
                 <th>Yield To Maturity</th>
+                <th>Macaulay Duration</th>
+                <th>Accrued Days</th>
             </tr>
         </thead>
         <tbody>
@@ -46,6 +48,8 @@ else
                     <td>@bond.DirtyPrice.ToString("F4")</td>
                     <td>@bond.RunningYield.ToString("F4")</td>
                     <td>@bond.YieldToMaturity.ToString("F4")</td>
+                    <td>@bond.MacaulayDuration.ToString("F4")</td>
+                    <td>@bond.AccruedDays.ToString("F4")</td>
                 </tr>
             }
         </tbody>
@@ -53,28 +57,13 @@ else
 }
 
 @code {
-    private List<BondDto>? gilts;
+    private List<BondDTO>? gilts;
 
     protected override async Task OnInitializedAsync()
     {
         // Set a longer timeout (e.g., 2 minutes)
         Http.Timeout = TimeSpan.FromMinutes(2);
 
-        gilts = await Http.GetFromJsonAsync<List<BondDto>>("http://localhost:5296/api/Bond");
-    }
-
-    public class BondDto
-    {
-        public string Name { get; set; } = default!;
-        public string Epic { get; set; } = default!;
-        public decimal Coupon { get; set; }
-        public DateTime Maturity { get; set; }
-        public decimal FaceValue { get; set; }
-        public decimal Tenor { get; set; } = default!;
-        public decimal DaysSinceLastCoupon { get; set; }
-        public decimal LastPrice { get; set; }
-        public decimal DirtyPrice { get; set; }
-        public decimal RunningYield { get; set; }
-        public decimal YieldToMaturity { get; set; }
+        gilts = await Http.GetFromJsonAsync<List<BondDTO>>("http://localhost:5296/api/Bond");
     }
 }

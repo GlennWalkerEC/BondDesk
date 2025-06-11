@@ -20,7 +20,7 @@ public class BondTests
         _giltInfoMock.SetupGet(x => x.FaceValue).Returns(1000m);
         _giltInfoMock.SetupGet(x => x.Name).Returns("Test Bond");
         _giltInfoMock.SetupGet(x => x.Coupon).Returns(5m);
-        _giltInfoMock.SetupGet(x => x.Maturity).Returns(new DateTime(2030, 1, 1));
+        _giltInfoMock.SetupGet(x => x.MaturityDate).Returns(new DateTime(2030, 1, 1));
         _giltInfoMock.SetupGet(x => x.Epic).Returns("TSTBND");
         _giltInfoMock.SetupGet(x => x.CouponPeriodMonths).Returns(6);
 
@@ -61,7 +61,7 @@ public class BondTests
         Assert.Equal(1000m, bond.FaceValue);
         Assert.Equal("Test Bond", bond.Name);
         Assert.Equal(0.05m, bond.Coupon); // 5m / 100
-        Assert.Equal(new DateTime(2030, 1, 1), bond.Maturity);
+        Assert.Equal(new DateTime(2030, 1, 1), bond.MaturityDate);
         Assert.Equal("TSTBND", bond.Epic);
     }
 
