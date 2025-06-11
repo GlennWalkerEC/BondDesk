@@ -7,5 +7,5 @@ using System.Threading.Tasks;
 namespace BondDesk.Domain.Interfaces.Providers;
 public interface IDateTimeProvider
 {
-	DateTime GetNow();
+	DateTime GetToday();
 }

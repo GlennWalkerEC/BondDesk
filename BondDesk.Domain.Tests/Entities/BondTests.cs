@@ -23,9 +23,8 @@ public class BondTests
         _giltInfoMock.SetupGet(x => x.Maturity).Returns(new DateTime(2030, 1, 1));
         _giltInfoMock.SetupGet(x => x.Epic).Returns("TSTBND");
         _giltInfoMock.SetupGet(x => x.CouponPeriodMonths).Returns(6);
-        _giltInfoMock.SetupGet(x => x.CouponPeriodDays).Returns(182);
 
-        _dateTimeProviderMock.Setup(x => x.GetNow()).Returns(new DateTime(2025, 1, 1));
+        _dateTimeProviderMock.Setup(x => x.GetToday()).Returns(new DateTime(2025, 1, 1));
 
         _bondQuoteDataMock.SetupGet(x => x.LastPrice).Returns(950m);
         _quoteRepoMock.Setup(x => x.BondValuation(It.IsAny<string>()))

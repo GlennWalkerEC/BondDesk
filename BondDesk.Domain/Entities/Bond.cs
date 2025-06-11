@@ -23,33 +23,47 @@ public class Bond : IGiltInfo, IBondEntity
 	public decimal Coupon => _giltInfo.Coupon / 100;
 	public DateTime Maturity => _giltInfo.Maturity;
 	public string Epic => _giltInfo.Epic ?? throw new InvalidOperationException("Epic cannot be null.");
-	public decimal Tenor => (_giltInfo.Maturity - _dateTimeProvider.GetNow()).Days / 365m;
+	public decimal Tenor => (_giltInfo.Maturity - _dateTimeProvider.GetToday()).Days / 365m;
 
 	public decimal DaysSinceLastCoupon => CalculateDaysSinceLastCoupon();
 	public decimal LastPrice => GetValuation().LastPrice ?? throw new NullReferenceException(nameof(Epic));
 	public decimal DirtyPrice => CalculateDirtyPrice();
 	public decimal RunningYield => Coupon * FaceValue / LastPrice * FaceValue;
-	
+
 	public decimal YieldToMaturity => CalculateYieldToMaturity();
-	//public decimal MacaulayDuration => CalculateMacaulayDuration();
+	public decimal MacaulayDuration => CalculateMacaulayDuration();
+	public decimal AccruedDays => CalculateDaysSinceLastCoupon();
+	public decimal DaysSinceLastPayment => CalculateDaysSinceLastCouponPayment();
 
 	public IBondQuoteData GetValuation() => _quoteRepo.BondValuation(Epic).Result;
 
-	protected decimal CalculateDaysSinceLastCoupon()
+	protected IEnumerable<Coupon> LastAndRemainingCoupons()
 	{
-		var today = _dateTimeProvider.GetNow();
-		// Find the last coupon payment date before today
-		DateTime lastCouponDate = _giltInfo.Maturity;
+		var coupons = new List<Coupon>();
+		var today = _dateTimeProvider.GetToday();
 
-		if(today == lastCouponDate) return _giltInfo.CouponPeriodDays;
-
-		while (lastCouponDate.AddMonths(-_giltInfo.CouponPeriodMonths) >= today)
+		for (var date = _giltInfo.Maturity; date >= today.AddMonths(-_giltInfo.CouponPeriodMonths); date = date.AddMonths(-_giltInfo.CouponPeriodMonths))
 		{
-			lastCouponDate = lastCouponDate.AddMonths(-_giltInfo.CouponPeriodMonths);
+			coupons.Add(new Coupon(date, _giltInfo.Coupon));
 		}
 
+		return coupons.OrderBy(x => x.Date);
+	}
+
+	protected decimal CalculateDaysSinceLastCoupon()
+	{
+		var today = _dateTimeProvider.GetToday();
+
 		// Calculate days since last coupon
-		return Convert.ToDecimal(Math.Abs((today - lastCouponDate).Days));
+		return Convert.ToDecimal(Math.Abs((today - LastAndRemainingCoupons().Min(x => x.Date)).Days));
+	}
+
+	protected decimal CalculateDaysSinceLastCouponPayment()
+	{
+		var today = _dateTimeProvider.GetToday();
+
+		// Calculate days since last coupon
+		return Convert.ToDecimal(Math.Abs((today - LastAndRemainingCoupons().Min(x => x.PaymentDate)).Days));
 	}
 
 	protected decimal CalculateYieldToMaturity(int iterations = 100, decimal tolerance = 1e-6m)
@@ -81,32 +95,35 @@ public class Bond : IGiltInfo, IBondEntity
 		return ytm; // Return last iteration result if convergence isn't achieved  
 	}
 
-	//protected decimal CalculateMacaulayDuration()
-	//{
-	//	List<decimal> cashFlows = [];
-	//	decimal duration = 0m;
+	protected decimal CalculateMacaulayDuration()
+	{
+		List<decimal> cashFlows = [];
+		decimal duration = 0m;
 
-	//	// Compute cash flows
-	//	for (int t = 1; t <= Tenor; t++)
-	//	{
-	//		decimal cashFlow = (FaceValue * Coupon);
-	//		if (t == Tenor) cashFlow += FaceValue; // Add face value at maturity
-	//		cashFlows.Add(cashFlow);
-	//	}
+		// Compute cash flows
+		for (int t = 1; t <= Tenor; t++)
+		{
+			decimal cashFlow = (FaceValue * Coupon);
+			if (t == Tenor) cashFlow += FaceValue; // Add face value at maturity
+			cashFlows.Add(cashFlow);
+		}
 
-	//	// Compute Macaulay Duration
-	//	for (int t = 1; t <= Tenor; t++)
-	//	{
-	//		decimal discountFactor = (decimal)Math.Pow((double)(1m + YieldToMaturity), t);
-	//		duration += (t * cashFlows[t - 1]) / discountFactor;
-	//	}
+		// Compute Macaulay Duration
+		for (int t = 1; t <= Tenor; t++)
+		{
+			decimal discountFactor = (decimal)Math.Pow((double)(1m + YieldToMaturity), t);
+			duration += (t * cashFlows[t - 1]) / discountFactor;
+		}
 
-	//	return duration / LastPrice;
-	//}
+		return duration / LastPrice;
+	}
 
 	protected decimal CalculateDirtyPrice()
 	{
-		decimal accruedInterest = (FaceValue * Coupon * CalculateDaysSinceLastCoupon()) / _giltInfo.CouponPeriodDays;
+		var lastAndNext = LastAndRemainingCoupons().OrderBy(x => x.Date).Take(2).ToArray();
+
+		decimal accruedInterest =
+			accruedInterest = (Coupon) * (AccruedDays / (lastAndNext[1].Date - lastAndNext[0].Date).Days);
 		return LastPrice + accruedInterest;
 	}
 
