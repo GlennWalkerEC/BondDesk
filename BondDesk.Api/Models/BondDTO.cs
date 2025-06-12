@@ -2,7 +2,6 @@ namespace BondDesk.Api.Models;
 
 public class BondDTO
 {
-	public required string Name { get; set; }
 	public decimal Coupon { get; set; }
 	public DateTime MaturityDate { get; set; }
 	public required string Epic { get; set; }

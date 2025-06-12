@@ -28,7 +28,6 @@ public class BondController : ControllerBase
 		{
 			gilts.Add(new BondDTO
 			{
-				Name = bond.Name,
 				Coupon = bond.Coupon,
 				MaturityDate = bond.MaturityDate,
 				Epic = bond.Epic,

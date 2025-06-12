@@ -11,7 +11,7 @@
 {
     <p>Loading...</p>
 }
-else if (!gilts.Any())
+else if (!FilteredGilts.Any())
 {
     <p>No gilts found.</p>
 }
@@ -20,29 +20,81 @@ else
     <table class="table">
         <thead>
             <tr>
-                <th>Name</th>
-                <th>Epic</th>
-                <th>Coupon (%)</th>
-                <th>Maturity Date</th>
-                <th>Dirty Price</th>
-                <th>Running Yield</th>
-                <th>Accrued Interest</th>
-                <th>Convexity</th>
-                <th>Modified Duration</th>
-                <th>Yield To Worst</th>
+                <th>
+                    <button class="btn btn-link p-0" @onclick="() => SortBy(nameof(BondDTO.Epic))">
+                        Epic @SortIndicator(nameof(BondDTO.Epic))
+                    </button>
+                    <br />
+                    <input class="form-control form-control-sm" @bind="filterEpic" @bind:event="oninput" placeholder="Filter..." />
+                </th>
+                <th>
+                    <button class="btn btn-link p-0" @onclick="() => SortBy(nameof(BondDTO.Coupon))">
+                        Coupon (%) @SortIndicator(nameof(BondDTO.Coupon))
+                    </button>
+                    <br />
+                    <input class="form-control form-control-sm" @bind="filterCoupon" @bind:event="oninput" placeholder="Filter..." />
+                </th>
+                <th>
+                    <button class="btn btn-link p-0" @onclick="() => SortBy(nameof(BondDTO.MaturityDate))">
+                        Maturity Date @SortIndicator(nameof(BondDTO.MaturityDate))
+                    </button>
+                    <br />
+                    <input class="form-control form-control-sm" @bind="filterMaturityDate" @bind:event="oninput" placeholder="yyyy-mm-dd" />
+                </th>
+                <th>
+                    <button class="btn btn-link p-0" @onclick="() => SortBy(nameof(BondDTO.DirtyPrice))">
+                        Dirty Price @SortIndicator(nameof(BondDTO.DirtyPrice))
+                    </button>
+                    <br />
+                    <input class="form-control form-control-sm" @bind="filterDirtyPrice" @bind:event="oninput" placeholder="Filter..." />
+                </th>
+                <th>
+                    <button class="btn btn-link p-0" @onclick="() => SortBy(nameof(BondDTO.AccruedInterest))">
+                        Accrued Interest @SortIndicator(nameof(BondDTO.AccruedInterest))
+                    </button>
+                    <br />
+                    <input class="form-control form-control-sm" @bind="filterAccruedInterest" @bind:event="oninput" placeholder="Filter..." />
+                </th>
+                <th>
+                    <button class="btn btn-link p-0" @onclick="() => SortBy(nameof(BondDTO.RunningYield))">
+                        Running Yield @SortIndicator(nameof(BondDTO.RunningYield))
+                    </button>
+                    <br />
+                    <input class="form-control form-control-sm" @bind="filterRunningYield" @bind:event="oninput" placeholder="Filter..." />
+                </th>
+                <th>
+                    <button class="btn btn-link p-0" @onclick="() => SortBy(nameof(BondDTO.Convexity))">
+                        Convexity @SortIndicator(nameof(BondDTO.Convexity))
+                    </button>
+                    <br />
+                    <input class="form-control form-control-sm" @bind="filterConvexity" @bind:event="oninput" placeholder="Filter..." />
+                </th>
+                <th>
+                    <button class="btn btn-link p-0" @onclick="() => SortBy(nameof(BondDTO.ModifiedDuration))">
+                        Modified Duration @SortIndicator(nameof(BondDTO.ModifiedDuration))
+                    </button>
+                    <br />
+                    <input class="form-control form-control-sm" @bind="filterModifiedDuration" @bind:event="oninput" placeholder="Filter..." />
+                </th>
+                <th>
+                    <button class="btn btn-link p-0" @onclick="() => SortBy(nameof(BondDTO.YieldToWorst))">
+                        Yield To Worst @SortIndicator(nameof(BondDTO.YieldToWorst))
+                    </button>
+                    <br />
+                    <input class="form-control form-control-sm" @bind="filterYieldToWorst" @bind:event="oninput" placeholder="Filter..." />
+                </th>
             </tr>
         </thead>
         <tbody>
-            @foreach (var bond in gilts)
+            @foreach (var bond in FilteredGilts)
             {
                 <tr>
-                    <td>@bond.Name</td>
                     <td>@bond.Epic</td>
                     <td>@((bond.Coupon * 100).ToString("F4"))</td>
                     <td>@bond.MaturityDate.ToString("yyyy-MM-dd")</td>
-                    <td>@bond.DirtyPrice.ToString("F4")</td>
-                    <td>@bond.RunningYield.ToString("F4")</td>
+                    <td>@bond.DirtyPrice.ToString("F4")</td>                    
                     <td>@bond.AccruedInterest.ToString("F4")</td>
+                    <td>@bond.RunningYield.ToString("F4")</td>
                     <td>@bond.Convexity.ToString("F4")</td>
                     <td>@bond.ModifiedDuration.ToString("F4")</td>
                     <td>@bond.YieldToWorst.ToString("F4")</td>
@@ -55,11 +107,90 @@ else
 @code {
     private List<BondDTO>? gilts;
 
+    // Filter fields
+    private string filterEpic = "";
+    private string filterCoupon = "";
+    private string filterMaturityDate = "";
+    private string filterDirtyPrice = "";
+    private string filterAccruedInterest = "";
+    private string filterRunningYield = "";
+    private string filterConvexity = "";
+    private string filterModifiedDuration = "";
+    private string filterYieldToWorst = "";
+
+    // Sorting state
+    private string? sortColumn;
+    private bool sortAscending = true;
+
     protected override async Task OnInitializedAsync()
     {
-        // Set a longer timeout (e.g., 2 minutes)
-        Http.Timeout = TimeSpan.FromMinutes(2);
-
         gilts = await Http.GetFromJsonAsync<List<BondDTO>>("http://localhost:5296/api/Bond");
+    }
+
+    private IEnumerable<BondDTO> FilteredGilts
+    {
+        get
+        {
+            if (gilts == null) return Enumerable.Empty<BondDTO>();
+            IEnumerable<BondDTO> query = gilts;
+
+            // Filtering
+            if (!string.IsNullOrWhiteSpace(filterEpic))
+                query = query.Where(b => b.Epic.Contains(filterEpic, StringComparison.OrdinalIgnoreCase));
+            if (!string.IsNullOrWhiteSpace(filterCoupon) && double.TryParse(filterCoupon, out var couponVal))
+                query = query.Where(b => (b.Coupon * 100).ToString("F4").Contains(filterCoupon));
+            if (!string.IsNullOrWhiteSpace(filterMaturityDate))
+                query = query.Where(b => b.MaturityDate.ToString("yyyy-MM-dd").Contains(filterMaturityDate));
+            if (!string.IsNullOrWhiteSpace(filterDirtyPrice))
+                query = query.Where(b => b.DirtyPrice.ToString("F4").Contains(filterDirtyPrice));
+            if (!string.IsNullOrWhiteSpace(filterAccruedInterest))
+                query = query.Where(b => b.AccruedInterest.ToString("F4").Contains(filterAccruedInterest));
+            if (!string.IsNullOrWhiteSpace(filterRunningYield))
+                query = query.Where(b => b.RunningYield.ToString("F4").Contains(filterRunningYield));
+            if (!string.IsNullOrWhiteSpace(filterConvexity))
+                query = query.Where(b => b.Convexity.ToString("F4").Contains(filterConvexity));
+            if (!string.IsNullOrWhiteSpace(filterModifiedDuration))
+                query = query.Where(b => b.ModifiedDuration.ToString("F4").Contains(filterModifiedDuration));
+            if (!string.IsNullOrWhiteSpace(filterYieldToWorst))
+                query = query.Where(b => b.YieldToWorst.ToString("F4").Contains(filterYieldToWorst));
+
+            // Sorting
+            query = sortColumn switch
+            {
+                nameof(BondDTO.Epic) => sortAscending ? query.OrderBy(b => b.Epic) : query.OrderByDescending(b => b.Epic),
+                nameof(BondDTO.Coupon) => sortAscending ? query.OrderBy(b => b.Coupon) : query.OrderByDescending(b => b.Coupon),
+                nameof(BondDTO.MaturityDate) => sortAscending ? query.OrderBy(b => b.MaturityDate) : query.OrderByDescending(b => b.MaturityDate),
+                nameof(BondDTO.DirtyPrice) => sortAscending ? query.OrderBy(b => b.DirtyPrice) : query.OrderByDescending(b => b.DirtyPrice),
+                nameof(BondDTO.AccruedInterest) => sortAscending ? query.OrderBy(b => b.AccruedInterest) : query.OrderByDescending(b => b.AccruedInterest),
+                nameof(BondDTO.RunningYield) => sortAscending ? query.OrderBy(b => b.RunningYield) : query.OrderByDescending(b => b.RunningYield),
+                nameof(BondDTO.Convexity) => sortAscending ? query.OrderBy(b => b.Convexity) : query.OrderByDescending(b => b.Convexity),
+                nameof(BondDTO.ModifiedDuration) => sortAscending ? query.OrderBy(b => b.ModifiedDuration) : query.OrderByDescending(b => b.ModifiedDuration),
+                nameof(BondDTO.YieldToWorst) => sortAscending ? query.OrderBy(b => b.YieldToWorst) : query.OrderByDescending(b => b.YieldToWorst),
+                _ => query
+            };
+
+            return query;
+        }
+    }
+
+    private void SortBy(string column)
+    {
+        if (sortColumn == column)
+        {
+            sortAscending = !sortAscending;
+        }
+        else
+        {
+            sortColumn = column;
+            sortAscending = true;
+        }
+    }
+
+    private MarkupString SortIndicator(string column)
+    {
+        if (sortColumn != column) return new MarkupString("");
+        return sortAscending
+            ? new MarkupString("&#9650;") // Up arrow
+            : new MarkupString("&#9660;"); // Down arrow
     }
 }

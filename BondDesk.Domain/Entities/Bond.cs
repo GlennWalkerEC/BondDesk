@@ -37,7 +37,7 @@ public class Bond : IGiltInfo, IBondEntity
 	public decimal DirtyPrice => CalculateDirtyPrice();
 	public decimal RunningYield => Coupon * FaceValue / LastPrice * FaceValue;
 	public decimal Convexity => CalculateConvexity();
-	public decimal YieldToWorst => CalculateYieldToWorst();
+	public decimal YieldToWorst => CalculateYTM(out _) * 100;
 	public decimal ModifiedDuration => CalculateModifiedDuration();
 
 	protected IEnumerable<Coupon> LastAndRemainingCoupons()
@@ -145,11 +145,6 @@ public class Bond : IGiltInfo, IBondEntity
 		duration += (Tenor * FaceValue) / (decimal)Math.Pow((double)(1 + ytm), (double)Tenor);
 
 		return duration / totalPV;
-	}
-
-	protected decimal CalculateYieldToWorst()
-	{
-		throw new NotImplementedException();
 	}
 
 	protected decimal CalculateConvexity()
