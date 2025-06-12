@@ -52,36 +52,7 @@ public class Bond : IGiltInfo, IBondEntity
 		return Convert.ToDecimal(Math.Abs((today - lastCouponDate).Days));
 	}
 
-	protected decimal CalculateYieldToMaturity(int iterations = 100, decimal tolerance = 1e-6m)
-	{
-		decimal ytm = Coupon;
-		for (int i = 0; i < iterations; i++)
-		{
-			decimal f = 0m, df = 0m;
-
-			// Compute function value (Bond price equation) and its derivative  
-			for (int t = 1; t <= Tenor; t++)
-			{
-				double discountFactor = Math.Pow((double)(1m + ytm), t);
-				f += (FaceValue * Coupon) / (decimal)discountFactor;
-				df += -(t * (FaceValue * Coupon)) / (decimal)Math.Pow((double)(1m + ytm), t + 1);
-			}
-
-			// Add present value of face value  
-			f += FaceValue / (decimal)Math.Pow((double)(1m + ytm), (double)Tenor) - LastPrice;
-			df += -Tenor * FaceValue / (decimal)Math.Pow((double)(1m + ytm), (double)(Tenor + 1));
-
-			// Newton-Raphson iteration step  
-			decimal newYtm = ytm - f / df;
-			if (Math.Abs(newYtm - ytm) < tolerance)
-				return newYtm;
-
-			ytm = newYtm;
-		}
-		return ytm; // Return last iteration result if convergence isn't achieved  
-	}
-
-	public decimal CalculateYTM(out bool isApproximate)
+	protected decimal CalculateYTM(out bool isApproximate)
     {
         decimal ytm = 0.045m; // Initial guess
         decimal tolerance = 1e-6m;
@@ -107,9 +78,52 @@ public class Bond : IGiltInfo, IBondEntity
 			}
             ytm = newYTM;
         }
-		
+
 		isApproximate = true;
         return ytm;
+    }
+
+	protected decimal CalculateMacaulayDuration()
+    {
+        decimal duration = 0;
+        decimal totalPV = 0;
+
+        for (int t = 1; t <= Tenor; t++)
+        {
+            decimal discountFactor = (decimal)Math.Pow((double)(1 + ytm), t);
+            decimal cashFlow = (Coupon * FaceValue);
+            duration += (t * cashFlow) / discountFactor;
+            totalPV += cashFlow / discountFactor;
+        }
+
+        totalPV += FaceValue / (decimal)Math.Pow((double)(1 + ytm), Tenor);
+        duration += (Tenor * FaceValue) / (decimal)Math.Pow((double)(1 + ytm), Tenor);
+
+        return duration / totalPV;
+    }
+
+    protected decimal CalculateModifiedDuration()
+    {
+        return CalculateMacaulayDuration() / (1 + CalculateYTM());
+    }
+
+	protected decimal CalculateConvexity()
+    {
+        decimal convexity = 0;
+        decimal totalPV = 0;
+
+        for (int t = 1; t <= Tenor; t++)
+        {
+            decimal discountFactor = (decimal)Math.Pow((double)(1 + CalculateYTM), t);
+            decimal cashFlow = (Coupon * FaceValue);
+            convexity += (t * (t + 1) * cashFlow) / discountFactor;
+            totalPV += cashFlow / discountFactor;
+        }
+
+        totalPV += FaceValue / (decimal)Math.Pow((double)(1 + ytm), Tenor);
+        convexity += (Tenor * (Tenor + 1) * FaceValue) / (decimal)Math.Pow((double)(1 + ytm), Tenor);
+
+        return convexity / (totalPV * (decimal)Math.Pow((double)(1 + ytm), 2));
     }
 
 	protected decimal CalculateDirtyPrice()
