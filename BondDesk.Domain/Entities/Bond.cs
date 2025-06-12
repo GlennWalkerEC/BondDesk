@@ -81,28 +81,36 @@ public class Bond : IGiltInfo, IBondEntity
 		return ytm; // Return last iteration result if convergence isn't achieved  
 	}
 
-	//protected decimal CalculateMacaulayDuration()
-	//{
-	//	List<decimal> cashFlows = [];
-	//	decimal duration = 0m;
+	public decimal CalculateYTM(out bool isApproximate)
+    {
+        decimal ytm = 0.045m; // Initial guess
+        decimal tolerance = 1e-6m;
+        int maxIterations = 1000;
+        
+        for (int i = 0; i < maxIterations; i++)
+        {
+            decimal f = 0, df = 0;
+            for (int t = 1; t <= Tenor; t++)
+            {
+                decimal discountFactor = (decimal)Math.Pow((double)(1 + ytm), t);
+                f += (Coupon * FaceValue) / discountFactor;
+                df += -(t * (Coupon * FaceValue)) / (discountFactor * (1 + ytm));
+            }
+            f += FaceValue / (decimal)Math.Pow((double)(1 + ytm), Tenor) - LastPrice;
+            df += -Tenor * FaceValue / (decimal)Math.Pow((double)(1 + ytm), Tenor + 1);
 
-	//	// Compute cash flows
-	//	for (int t = 1; t <= Tenor; t++)
-	//	{
-	//		decimal cashFlow = (FaceValue * Coupon);
-	//		if (t == Tenor) cashFlow += FaceValue; // Add face value at maturity
-	//		cashFlows.Add(cashFlow);
-	//	}
-
-	//	// Compute Macaulay Duration
-	//	for (int t = 1; t <= Tenor; t++)
-	//	{
-	//		decimal discountFactor = (decimal)Math.Pow((double)(1m + YieldToMaturity), t);
-	//		duration += (t * cashFlows[t - 1]) / discountFactor;
-	//	}
-
-	//	return duration / LastPrice;
-	//}
+            decimal newYTM = ytm - f / df;
+            if (Math.Abs(newYTM - ytm) < tolerance)
+			{
+				isApproximate = false;
+				return newYTM;
+			}
+            ytm = newYTM;
+        }
+		
+		isApproximate = true;
+        return ytm;
+    }
 
 	protected decimal CalculateDirtyPrice()
 	{
