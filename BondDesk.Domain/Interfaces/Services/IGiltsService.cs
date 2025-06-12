@@ -1,12 +1,7 @@
-﻿using BondDesk.Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using BondDesk.Domain.Interfaces.Entities;
 
 namespace BondDesk.Domain.Interfaces.Services;
 public interface IGiltsService
 {
-	IAsyncEnumerable<Bond> GetGiltsAsync();
+	IAsyncEnumerable<IBondEntity> GetGiltsAsync();
 }

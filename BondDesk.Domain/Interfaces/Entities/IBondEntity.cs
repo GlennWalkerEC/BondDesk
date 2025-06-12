@@ -2,17 +2,14 @@
 
 public interface IBondEntity
 {
-	decimal Coupon { get; }
-	string Epic { get; }
-	decimal FaceValue { get; }
-	decimal LastPrice { get; }
-	DateTime MaturityDate { get; }
-	string Name { get; }
-	decimal Tenor { get; }
-	decimal RunningYield { get; }
-	decimal DaysSinceLastCoupon { get; }
-	decimal DirtyPrice { get; }
-	decimal AccruedDays { get; }
-
-	string ToString();
+    string Name { get; }
+    decimal Coupon { get; }
+    DateTime MaturityDate { get; }
+    string Epic { get; }
+    decimal DirtyPrice { get; }
+    decimal RunningYield { get; }
+    decimal AccruedInterest { get; }
+    decimal Convexity { get; }
+    decimal ModifiedDuration { get; }
+    decimal YieldToWorst { get; }
 }

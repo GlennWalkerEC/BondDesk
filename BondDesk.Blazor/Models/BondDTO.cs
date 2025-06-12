@@ -1,4 +1,4 @@
-namespace BondDesk.Api.Models;
+﻿namespace BondDesk.Blazor.Models;
 
 public class BondDTO
 {

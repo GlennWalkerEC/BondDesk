@@ -1,6 +1,8 @@
 ﻿@page "/"
 
 @using System.Net.Http.Json
+@using BondDesk.Blazor.Models
+
 @inject HttpClient Http
 
 <h3>Gilts (UK Government Bonds)</h3>
@@ -21,16 +23,13 @@ else
                 <th>Name</th>
                 <th>Epic</th>
                 <th>Coupon (%)</th>
-                <th>Maturity</th>
-                <th>Face Value</th>
-                <th>Tenor</th>
-                <th>Days Since Last Coupon</th>
-                <th>Last Price</th>
+                <th>Maturity Date</th>
                 <th>Dirty Price</th>
                 <th>Running Yield</th>
-                <th>Yield To Maturity</th>
-                <th>Macaulay Duration</th>
-                <th>Accrued Days</th>
+                <th>Accrued Interest</th>
+                <th>Convexity</th>
+                <th>Modified Duration</th>
+                <th>Yield To Worst</th>
             </tr>
         </thead>
         <tbody>
@@ -40,16 +39,13 @@ else
                     <td>@bond.Name</td>
                     <td>@bond.Epic</td>
                     <td>@((bond.Coupon * 100).ToString("F4"))</td>
-                    <td>@bond.Maturity.ToString("yyyy-MM-dd")</td>
-                    <td>@bond.FaceValue.ToString("F4")</td>
-                    <td>@bond.Tenor.ToString("F4")</td>
-                    <td>@bond.DaysSinceLastCoupon.ToString("F4")</td>
-                    <td>@bond.LastPrice.ToString("F4")</td>
+                    <td>@bond.MaturityDate.ToString("yyyy-MM-dd")</td>
                     <td>@bond.DirtyPrice.ToString("F4")</td>
                     <td>@bond.RunningYield.ToString("F4")</td>
-                    <td>@bond.YieldToMaturity.ToString("F4")</td>
-                    <td>@bond.MacaulayDuration.ToString("F4")</td>
-                    <td>@bond.AccruedDays.ToString("F4")</td>
+                    <td>@bond.AccruedInterest.ToString("F4")</td>
+                    <td>@bond.Convexity.ToString("F4")</td>
+                    <td>@bond.ModifiedDuration.ToString("F4")</td>
+                    <td>@bond.YieldToWorst.ToString("F4")</td>
                 </tr>
             }
         </tbody>

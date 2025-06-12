@@ -30,12 +30,15 @@ public class Bond : IGiltInfo, IBondEntity
 
 	public decimal DaysSinceLastCoupon => CalculateDaysSinceLastCoupon();
 	public decimal LastPrice => GetValuation().LastPrice ?? throw new NullReferenceException(nameof(Epic));
-	public decimal DirtyPrice => CalculateDirtyPrice();
-	public decimal RunningYield => Coupon * FaceValue / LastPrice * FaceValue;
 	public decimal AccruedDays => CalculateDaysSinceLastCoupon();
 	public decimal DaysSinceLastPayment => CalculateDaysSinceLastCouponPayment();
 	public decimal AccruedInterest => CalculateAccruedInterest();
+
+	public decimal DirtyPrice => CalculateDirtyPrice();
+	public decimal RunningYield => Coupon * FaceValue / LastPrice * FaceValue;
 	public decimal Convexity => CalculateConvexity();
+	public decimal YieldToWorst => CalculateYieldToWorst();
+	public decimal ModifiedDuration => CalculateModifiedDuration();
 
 	protected IEnumerable<Coupon> LastAndRemainingCoupons()
 	{
@@ -49,6 +52,8 @@ public class Bond : IGiltInfo, IBondEntity
 
 		return coupons.OrderBy(x => x.Date);
 	}
+
+	protected IEnumerable<Coupon> LastAndNextCoupon() => LastAndRemainingCoupons().OrderBy(x => x.Date).Take(2).ToArray();
 
 	protected decimal CalculateDaysSinceLastCoupon()
 	{
@@ -66,97 +71,104 @@ public class Bond : IGiltInfo, IBondEntity
 		return Convert.ToDecimal(Math.Abs((today - LastAndRemainingCoupons().Min(x => x.PaymentDate)).Days));
 	}
 
-	protected decimal CalculateYTM(out bool isApproximate)
-    {
-        decimal ytm = 0.045m; // Initial guess
-        decimal tolerance = 1e-6m;
-        int maxIterations = 1000;
-        
-        for (int i = 0; i < maxIterations; i++)
-        {
-            decimal f = 0, df = 0;
-            for (int t = 1; t <= Tenor; t++)
-            {
-                decimal discountFactor = (decimal)Math.Pow((double)(1 + ytm), t);
-                f += (Coupon * FaceValue) / discountFactor;
-                df += -(t * (Coupon * FaceValue)) / (discountFactor * (1 + ytm));
-            }
-            f += FaceValue / (decimal)Math.Pow((double)(1 + ytm), Tenor) - LastPrice;
-            df += -Tenor * FaceValue / (decimal)Math.Pow((double)(1 + ytm), Tenor + 1);
+	protected decimal CalculateDirtyPrice()
+	{
+		var lastAndNext = LastAndNextCoupon().ToArray();
+		decimal accruedInterest = (FaceValue * Coupon * CalculateDaysSinceLastCoupon()) / GetCouponPeriodDays();
+		return LastPrice + accruedInterest;
+	}
 
-            decimal newYTM = ytm - f / df;
-            if (Math.Abs(newYTM - ytm) < tolerance)
+    protected decimal CalculateModifiedDuration()
+    {
+        return CalculateMacaulayDuration() / (1 + CalculateYTM(out _));
+    }
+
+	private decimal CalculateAccruedInterest()
+	{
+		var lastAndNext = LastAndNextCoupon().ToArray();
+		return (FaceValue * (Coupon / 2)) * (AccruedDays / GetCouponPeriodDays());
+	}
+
+	protected int GetCouponPeriodDays()
+	{
+		var lastAndNext = LastAndNextCoupon().ToArray();
+		return (lastAndNext[1].Date - lastAndNext[0].Date).Days;
+	}
+
+
+	protected decimal CalculateYTM(out bool isApproximate)
+	{
+		decimal ytm = 0.045m; // Initial guess
+		decimal tolerance = 0.0001M;
+		int maxIterations = 1000;
+
+		for (int i = 0; i < maxIterations; i++)
+		{
+			decimal f = 0, df = 0;
+			for (int t = 1; t <= Tenor; t++)
+			{
+				decimal discountFactor = (decimal)Math.Pow((double)(1 + ytm), t);
+				f += (Coupon * FaceValue) / discountFactor;
+				df += -(t * (Coupon * FaceValue)) / (discountFactor * (1 + ytm));
+			}
+			f += FaceValue / (decimal)Math.Pow((double)(1 + ytm), (double)Tenor) - LastPrice;
+			df += -Tenor * FaceValue / (decimal)Math.Pow((double)(1 + ytm), (double)Tenor + 1);
+
+			decimal newYTM = ytm - f / df;
+			if (Math.Abs(newYTM - ytm) < tolerance)
 			{
 				isApproximate = false;
 				return newYTM;
 			}
-            ytm = newYTM;
-        }
+			ytm = newYTM;
+		}
 
 		isApproximate = true;
-        return ytm;
-    }
+		return ytm;
+	}
 
 	protected decimal CalculateMacaulayDuration()
-    {
-        decimal duration = 0;
-        decimal totalPV = 0;
-
-        for (int t = 1; t <= Tenor; t++)
-        {
-            decimal discountFactor = (decimal)Math.Pow((double)(1 + ytm), t);
-            decimal cashFlow = (Coupon * FaceValue);
-            duration += (t * cashFlow) / discountFactor;
-            totalPV += cashFlow / discountFactor;
-        }
-
-        totalPV += FaceValue / (decimal)Math.Pow((double)(1 + ytm), Tenor);
-        duration += (Tenor * FaceValue) / (decimal)Math.Pow((double)(1 + ytm), Tenor);
-
-        return duration / totalPV;
-    }
-
-    protected decimal CalculateModifiedDuration()
-    {
-        return CalculateMacaulayDuration() / (1 + CalculateYTM());
-    }
-	private decimal CalculateAccruedInterest()
 	{
-		var lastAndNext = LastAndRemainingCoupons().OrderBy(x => x.Date).Take(2).ToArray();
-		return (FaceValue * (Coupon / 2)) * (AccruedDays / (lastAndNext[1].Date - lastAndNext[0].Date).Days);
+		decimal duration = 0;
+		decimal totalPV = 0;
+		var ytm = CalculateYTM(out _);
+
+		for (int t = 1; t <= Tenor; t++)
+		{
+			decimal discountFactor = (decimal)Math.Pow((double)(1 + ytm), t);
+			decimal cashFlow = (Coupon * FaceValue);
+			duration += (t * cashFlow) / discountFactor;
+			totalPV += cashFlow / discountFactor;
+		}
+
+		totalPV += FaceValue / (decimal)Math.Pow((double)(1 + ytm), (double)Tenor);
+		duration += (Tenor * FaceValue) / (decimal)Math.Pow((double)(1 + ytm), (double)Tenor);
+
+		return duration / totalPV;
+	}
+
+	protected decimal CalculateYieldToWorst()
+	{
+		throw new NotImplementedException();
 	}
 
 	protected decimal CalculateConvexity()
     {
         decimal convexity = 0;
         decimal totalPV = 0;
+		var ytm = CalculateYTM(out _);
 
-        for (int t = 1; t <= Tenor; t++)
+		for (int t = 1; t <= Tenor; t++)
         {
-            decimal discountFactor = (decimal)Math.Pow((double)(1 + CalculateYTM), t);
+            decimal discountFactor = (decimal)Math.Pow((double)(1 + ytm), t);
             decimal cashFlow = (Coupon * FaceValue);
             convexity += (t * (t + 1) * cashFlow) / discountFactor;
             totalPV += cashFlow / discountFactor;
         }
 
-        totalPV += FaceValue / (decimal)Math.Pow((double)(1 + ytm), Tenor);
-        convexity += (Tenor * (Tenor + 1) * FaceValue) / (decimal)Math.Pow((double)(1 + ytm), Tenor);
+        totalPV += FaceValue / (decimal)Math.Pow((double)(1 + ytm), (double)Tenor);
+        convexity += (Tenor * (Tenor + 1) * FaceValue) / (decimal)Math.Pow((double)(1 + ytm), (double)Tenor);
 
         return convexity / (totalPV * (decimal)Math.Pow((double)(1 + ytm), 2));
     }
-
-		for (int t = 1; t <= yearsDouble * 2; t++) // Semi-annual payments
-		{
-			double discountFactor = Math.Pow(1 + yieldDouble / 200, t);
-			double cashFlow = (faceDouble * couponDouble / 2);
-			convexity += (Convert.ToDouble(cashFlow) * t * (t + 1)) / (discountFactor * discountFactor);
-		}
-		convexity += (faceDouble * yearsDouble * (yearsDouble + 1)) / Math.Pow(1 + yieldDouble / 200, yearsDouble * 2);
-		return Convert.ToDecimal(convexity / Math.Pow(1 + yieldDouble / 200, 2));
-	}
-
-	public override string ToString()
-	{
-		return $"{Name} ({Epic}) - {Coupon}% coupon, matures on {MaturityDate.ToShortDateString()}";
-	}
 }

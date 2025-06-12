@@ -1,4 +1,5 @@
 ﻿using BondDesk.Domain.Entities;
+using BondDesk.Domain.Interfaces.Entities;
 using BondDesk.Domain.Interfaces.Providers;
 using BondDesk.Domain.Interfaces.Repos;
 using BondDesk.Domain.Interfaces.Services;
@@ -18,7 +19,7 @@ public class GiltsService : IGiltsService
 		_dateTimeProvider = dateTimeProvider ?? throw new ArgumentNullException(nameof(_dateTimeProvider));
 	}
 
-	public async IAsyncEnumerable<Bond> GetGiltsAsync()
+	public async IAsyncEnumerable<IBondEntity> GetGiltsAsync()
 	{
 		foreach (var giltInfo in _giltRepo.GetAllGilts())
 		{
