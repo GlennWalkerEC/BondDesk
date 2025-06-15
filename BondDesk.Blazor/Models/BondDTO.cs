@@ -11,4 +11,5 @@ public class BondDTO
 	public decimal Convexity { get; set; }
 	public decimal ModifiedDuration { get; set; }
 	public decimal YieldToWorst { get; set; }
+	public decimal TotalReturn { get; set; }
 }

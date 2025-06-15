@@ -12,6 +12,8 @@ public class GiltsService : IGiltsService
 	protected readonly IGiltRepo _giltRepo;
 	protected readonly IDateTimeProvider _dateTimeProvider;
 
+	protected static decimal AssumedReinvestmentRate = 0.02832m; // TODO: Move to Config
+
 	public GiltsService(IQuoteRepo lseRepo, IGiltRepo giltRepo, IDateTimeProvider dateTimeProvider)
 	{
 		_lseRepo = lseRepo ?? throw new ArgumentNullException(nameof(lseRepo));
@@ -23,7 +25,7 @@ public class GiltsService : IGiltsService
 	{
 		foreach (var giltInfo in _giltRepo.GetAllGilts())
 		{
-			var bond = new Bond(_lseRepo, giltInfo, _dateTimeProvider);
+			var bond = new Bond(_lseRepo, giltInfo, _dateTimeProvider, AssumedReinvestmentRate);
 			Task.Run(bond.GetValuation); // Eagerly get valuation
 			yield return bond;
 		}

@@ -10,12 +10,14 @@ public class Bond : IGiltInfo, IBondEntity
 	private readonly IQuoteRepo _quoteRepo;
 	private readonly IGiltInfo _giltInfo;
 	private readonly IDateTimeProvider _dateTimeProvider;
+	private readonly decimal _assumedReinvestmentRate;
 
-	public Bond(IQuoteRepo quoteRepo, IGiltInfo giltInfo, IDateTimeProvider dateTimeProvider)
+	public Bond(IQuoteRepo quoteRepo, IGiltInfo giltInfo, IDateTimeProvider dateTimeProvider, decimal assumedReinvestmentRate)
 	{
 		_quoteRepo = quoteRepo ?? throw new ArgumentNullException(nameof(quoteRepo), "Quote repository cannot be null.");
 		_giltInfo = giltInfo ?? throw new ArgumentNullException(nameof(giltInfo), "Gilt information cannot be null.");
 		_dateTimeProvider = dateTimeProvider ?? throw new ArgumentNullException(nameof(dateTimeProvider), "DateTime provider cannot be null.");
+		_assumedReinvestmentRate = assumedReinvestmentRate;
 	}
 
 	public decimal FaceValue => _giltInfo.FaceValue;
@@ -39,6 +41,9 @@ public class Bond : IGiltInfo, IBondEntity
 	public decimal Convexity => CalculateConvexity();
 	public decimal YieldToWorst => CalculateYTM(out _) * 100;
 	public decimal ModifiedDuration => CalculateModifiedDuration();
+	public decimal TotalReturn => CalculateTotalReturn();
+
+	public decimal AssumedReinvestmentRate { get; }
 
 	protected IEnumerable<Coupon> LastAndRemainingCoupons()
 	{
@@ -107,12 +112,12 @@ public class Bond : IGiltInfo, IBondEntity
 			decimal f = 0, df = 0;
 			for (int t = 1; t <= Tenor; t++)
 			{
-				decimal discountFactor = (decimal)Math.Pow((double)(1 + ytm), t);
+				decimal discountFactor = DecimalPow((1 + ytm), t);
 				f += (Coupon * FaceValue) / discountFactor;
 				df += -(t * (Coupon * FaceValue)) / (discountFactor * (1 + ytm));
 			}
-			f += FaceValue / (decimal)Math.Pow((double)(1 + ytm), (double)Tenor) - LastPrice;
-			df += -Tenor * FaceValue / (decimal)Math.Pow((double)(1 + ytm), (double)Tenor + 1);
+			f += FaceValue / DecimalPow((1 + ytm), Tenor) - LastPrice;
+			df += -Tenor * FaceValue / DecimalPow((1 + ytm), Tenor);
 
 			decimal newYTM = ytm - f / df;
 			if (Math.Abs(newYTM - ytm) < tolerance)
@@ -135,14 +140,14 @@ public class Bond : IGiltInfo, IBondEntity
 
 		for (int t = 1; t <= Tenor; t++)
 		{
-			decimal discountFactor = (decimal)Math.Pow((double)(1 + ytm), t);
+			decimal discountFactor = DecimalPow((1 + ytm), t);
 			decimal cashFlow = (Coupon * FaceValue);
 			duration += (t * cashFlow) / discountFactor;
 			totalPV += cashFlow / discountFactor;
 		}
 
-		totalPV += FaceValue / (decimal)Math.Pow((double)(1 + ytm), (double)Tenor);
-		duration += (Tenor * FaceValue) / (decimal)Math.Pow((double)(1 + ytm), (double)Tenor);
+		totalPV += FaceValue / DecimalPow((1 + ytm), Tenor);
+		duration += (Tenor * FaceValue) / DecimalPow((1 + ytm), Tenor);
 
 		return duration / totalPV;
 	}
@@ -155,15 +160,41 @@ public class Bond : IGiltInfo, IBondEntity
 
 		for (int t = 1; t <= Tenor; t++)
         {
-            decimal discountFactor = (decimal)Math.Pow((double)(1 + ytm), t);
+            decimal discountFactor = DecimalPow((1 + ytm), t);
             decimal cashFlow = (Coupon * FaceValue);
             convexity += (t * (t + 1) * cashFlow) / discountFactor;
             totalPV += cashFlow / discountFactor;
         }
 
-        totalPV += FaceValue / (decimal)Math.Pow((double)(1 + ytm), (double)Tenor);
-        convexity += (Tenor * (Tenor + 1) * FaceValue) / (decimal)Math.Pow((double)(1 + ytm), (double)Tenor);
+        totalPV += FaceValue / DecimalPow((1 + ytm), Tenor);
+        convexity += (Tenor * (Tenor + 1) * FaceValue) / DecimalPow((1 + ytm), Tenor);
 
-        return convexity / (totalPV * (decimal)Math.Pow((double)(1 + ytm), 2));
+        return convexity / (totalPV * DecimalPow((1 + ytm), 2));
     }
+
+	protected decimal CalculateTotalReturn()
+	{
+		decimal holdingYears = Tenor;
+		int fullCoupons = (int)Math.Floor((double)holdingYears);
+		decimal partialYear = holdingYears - fullCoupons;
+
+		decimal reinvestedCoupons = 0m;
+		for (int i = 1; i <= fullCoupons; i++)
+		{
+			decimal t = holdingYears - (i - 1);
+			reinvestedCoupons += Coupon * DecimalPow(1 + _assumedReinvestmentRate, t);
+		}
+
+		reinvestedCoupons += Coupon * partialYear;
+
+		decimal capitalGain = FaceValue - DirtyPrice;
+		decimal totalReturn = (reinvestedCoupons + capitalGain) / DirtyPrice;
+		return totalReturn;
+	}
+
+	protected static decimal DecimalPow(decimal baseValue, decimal exponent)
+	{
+		return (decimal)Math.Pow((double)baseValue, (double)exponent);
+	}
+
 }

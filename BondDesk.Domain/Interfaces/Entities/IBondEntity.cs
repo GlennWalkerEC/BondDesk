@@ -12,4 +12,5 @@ public interface IBondEntity
     decimal Convexity { get; }
     decimal ModifiedDuration { get; }
     decimal YieldToWorst { get; }
+    decimal TotalReturn { get; }
 }

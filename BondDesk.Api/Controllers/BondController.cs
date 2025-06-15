@@ -36,7 +36,8 @@ public class BondController : ControllerBase
 				AccruedInterest = bond.AccruedInterest,
 				Convexity = bond.Convexity,
 				ModifiedDuration = bond.ModifiedDuration,
-				YieldToWorst = bond.YieldToWorst
+				YieldToWorst = bond.YieldToWorst,
+				TotalReturn = bond.TotalReturn
 			});
 		}
 		return Ok(gilts);

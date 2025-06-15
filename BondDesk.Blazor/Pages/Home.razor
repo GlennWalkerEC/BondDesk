@@ -83,6 +83,13 @@ else
                     <br />
                     <input class="form-control form-control-sm" @bind="filterYieldToWorst" @bind:event="oninput" placeholder="Filter..." />
                 </th>
+                <th>
+                    <button class="btn btn-link p-0" @onclick="() => SortBy(nameof(BondDTO.TotalReturn))">
+                        Total Return @SortIndicator(nameof(BondDTO.TotalReturn))
+                    </button>
+                    <br />
+                    <input class="form-control form-control-sm" @bind="filterTotalReturn" @bind:event="oninput" placeholder="Filter..." />
+                </th>
             </tr>
         </thead>
         <tbody>
@@ -98,6 +105,7 @@ else
                     <td>@bond.Convexity.ToString("F4")</td>
                     <td>@bond.ModifiedDuration.ToString("F4")</td>
                     <td>@bond.YieldToWorst.ToString("F4")</td>
+                    <td>@bond.TotalReturn.ToString("F4")</td>
                 </tr>
             }
         </tbody>
@@ -117,6 +125,7 @@ else
     private string filterConvexity = "";
     private string filterModifiedDuration = "";
     private string filterYieldToWorst = "";
+    private string filterTotalReturn = "";
 
     // Sorting state
     private string? sortColumn;
@@ -153,6 +162,8 @@ else
                 query = query.Where(b => b.ModifiedDuration.ToString("F4").Contains(filterModifiedDuration));
             if (!string.IsNullOrWhiteSpace(filterYieldToWorst))
                 query = query.Where(b => b.YieldToWorst.ToString("F4").Contains(filterYieldToWorst));
+            if (!string.IsNullOrWhiteSpace(filterTotalReturn))
+                query = query.Where(b => b.TotalReturn.ToString("F4").Contains(filterTotalReturn));
 
             // Sorting
             query = sortColumn switch
@@ -166,6 +177,7 @@ else
                 nameof(BondDTO.Convexity) => sortAscending ? query.OrderBy(b => b.Convexity) : query.OrderByDescending(b => b.Convexity),
                 nameof(BondDTO.ModifiedDuration) => sortAscending ? query.OrderBy(b => b.ModifiedDuration) : query.OrderByDescending(b => b.ModifiedDuration),
                 nameof(BondDTO.YieldToWorst) => sortAscending ? query.OrderBy(b => b.YieldToWorst) : query.OrderByDescending(b => b.YieldToWorst),
+                nameof(BondDTO.TotalReturn) => sortAscending ? query.OrderBy(b => b.TotalReturn) : query.OrderByDescending(b => b.TotalReturn),
                 _ => query
             };
 
