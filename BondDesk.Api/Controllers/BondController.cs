@@ -1,5 +1,6 @@
 ﻿using BondDesk.Api.Models;
 using BondDesk.Domain.Entities;
+using BondDesk.Domain.Interfaces.Entities;
 using BondDesk.Domain.Interfaces.Repos;
 using BondDesk.Domain.Interfaces.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -26,20 +27,25 @@ public class BondController : ControllerBase
 		var gilts = new List<BondDTO>();
 		await foreach (var bond in _giltsService.GetGiltsAsync())
 		{
-			gilts.Add(new BondDTO
-			{
-				Coupon = bond.Coupon,
-				MaturityDate = bond.MaturityDate,
-				Epic = bond.Epic,
-				DirtyPrice = bond.DirtyPrice,
-				RunningYield = bond.RunningYield,
-				AccruedInterest = bond.AccruedInterest,
-				Convexity = bond.Convexity,
-				ModifiedDuration = bond.ModifiedDuration,
-				YieldToWorst = bond.YieldToWorst,
-				TotalReturn = bond.TotalReturn
-			});
+			gilts.Add(MapToDTO(bond));
 		}
 		return Ok(gilts);
+	}
+
+	private static BondDTO MapToDTO(IBondEntity bond)
+	{
+		return new BondDTO
+		{
+			Coupon = bond.Coupon,
+			MaturityDate = bond.MaturityDate,
+			Epic = bond.Epic,
+			DirtyPrice = bond.DirtyPrice,
+			CurrentYield = bond.CurrentYield,
+			AccruedInterest = bond.AccruedInterest,
+			Convexity = bond.Convexity,
+			ModifiedDuration = bond.ModifiedDuration,
+			PresentValueOverDirty = bond.PresentValueOverDirty,
+			YieldToMaturity = bond.YieldToMaturity
+		};
 	}
 }

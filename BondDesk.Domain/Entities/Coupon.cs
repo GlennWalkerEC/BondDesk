@@ -1,6 +1,9 @@
-﻿namespace BondDesk.Domain.Entities;
+﻿using BondDesk.Domain.Interfaces.Providers;
+using BondDesk.Domain.Statics;
 
-public record Coupon(DateTime Date, decimal Rate) {
+namespace BondDesk.Domain.Entities;
+
+public record Coupon(DateTime Date, decimal Principal, decimal Rate) {
 
 	public DateTime PaymentDate
 	{
@@ -15,4 +18,18 @@ public record Coupon(DateTime Date, decimal Rate) {
 		}
 	}
 
+	public decimal CalculatePresentValue(IDateTimeProvider dateTimeProvider, decimal discountRate)
+	{
+		var futureValue = Principal * Rate;
+
+		var years = Convert.ToDecimal((PaymentDate - dateTimeProvider.GetToday()).TotalDays / 365.2425);		
+
+		var compoundingPerYear = 1; // Annual compounding
+
+		decimal ratePerPeriod = discountRate / compoundingPerYear;
+		decimal totalPeriods = years * compoundingPerYear;
+		decimal factor = DecimalFunctions.DecimalPow(1 + ratePerPeriod, totalPeriods);
+
+		return futureValue / factor;
+	}
 }

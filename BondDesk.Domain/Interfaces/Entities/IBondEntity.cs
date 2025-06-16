@@ -7,10 +7,10 @@ public interface IBondEntity
     DateTime MaturityDate { get; }
     string Epic { get; }
     decimal DirtyPrice { get; }
-    decimal RunningYield { get; }
+    decimal CurrentYield { get; }
     decimal AccruedInterest { get; }
     decimal Convexity { get; }
     decimal ModifiedDuration { get; }
-    decimal YieldToWorst { get; }
-    decimal TotalReturn { get; }
+    decimal PresentValueOverDirty { get; }
+	decimal YieldToMaturity { get; }
 }
