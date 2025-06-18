@@ -12,4 +12,5 @@ public class BondDTO
 	public decimal ModifiedDuration { get; set; }
 	public decimal PresentValueOverDirty { get; set; }
 	public decimal YieldToMaturity { get; set; }
+	public decimal? OfferQty { get; set; }
 }

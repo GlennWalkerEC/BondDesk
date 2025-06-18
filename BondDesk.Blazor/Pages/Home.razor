@@ -39,7 +39,7 @@ else
                 </th>
                 <th>
                     <button class="btn btn-link p-0" @onclick="() => SortBy(nameof(BondDTO.YieldToMaturity))">
-                        Yield To Maturity @SortIndicator(nameof(BondDTO.YieldToMaturity))
+                        Yield To Maturity (%) @SortIndicator(nameof(BondDTO.YieldToMaturity))
                     </button>
                     <br />
                     <input class="form-control form-control-sm" @bind="filterYieldToMaturity" @bind:event="oninput" placeholder="Filter..." />
@@ -54,7 +54,7 @@ else
                 <th>
                     <b>
                     <button class="btn btn-link p-0" @onclick="() => SortBy(nameof(BondDTO.PresentValueOverDirty))">
-                        Present Value Over Dirty @SortIndicator(nameof(BondDTO.PresentValueOverDirty))
+                        Present Value / Dirty @SortIndicator(nameof(BondDTO.PresentValueOverDirty))
                     </button>
                     </b>
                     <br />
@@ -72,7 +72,7 @@ else
                 <th>
                     <b>
                     <button class="btn btn-link p-0" @onclick="() => SortBy(nameof(BondDTO.CurrentYield))">
-                        Current Yield @SortIndicator(nameof(BondDTO.CurrentYield))
+                        Current Yield (%) @SortIndicator(nameof(BondDTO.CurrentYield))
                     </button>
                     </b>
                     <br />
@@ -96,6 +96,15 @@ else
                     <br />
                     <input class="form-control form-control-sm" @bind="filterModifiedDuration" @bind:event="oninput" placeholder="Filter..." />
                 </th>
+                <th>
+                    <b>
+                    <button class="btn btn-link p-0" @onclick="() => SortBy(nameof(BondDTO.OfferQty))">
+                        Offer Qty @SortIndicator(nameof(BondDTO.OfferQty))
+                    </button>
+                    </b>
+                    <br />
+                    <input class="form-control form-control-sm" @bind="filterOfferQty" @bind:event="oninput" placeholder="Filter..." />
+                </th>
             </tr>
         </thead>
         <tbody>
@@ -105,13 +114,14 @@ else
                     <td>@bond.Epic</td>
                     <td>@bond.MaturityDate.ToString("yyyy-MM-dd")</td>
                     <td>@bond.AccruedInterest.ToString("F4")</td>
-                    <td><i>@bond.YieldToMaturity.ToString("P4")</i></td>
+                    <td><i>@bond.YieldToMaturity.ToString("F4")</i></td>
                     <td>@bond.DirtyPrice.ToString("F4")</td>
                     <td><b>@bond.PresentValueOverDirty.ToString("F4")</b></td>
-                    <td><b>@bond.Coupon.ToString("P4")</b></td>
-                    <td><b>@bond.CurrentYield.ToString("P4")</b></td>
+                    <td><b>@bond.Coupon.ToString("F4")</b></td>
+                    <td><b>@bond.CurrentYield.ToString("F4")</b></td>
                     <td><b>@bond.Convexity.ToString("F4")</b></td>
                     <td><b>@bond.ModifiedDuration.ToString("F4")</b></td>
+                    <td>@bond.OfferQty</td>
                 </tr>
             }
         </tbody>
@@ -132,6 +142,7 @@ else
     private string filterCurrentYield = "";
     private string filterConvexity = "";
     private string filterModifiedDuration = "";
+    private string filterOfferQty = "";
 
     // Sorting state
     private string? sortColumn;
@@ -212,6 +223,10 @@ else
             if (modifiedDurationTerms.Length > 0)
                 query = query.Where(b => modifiedDurationTerms.Any(term => MatchesNumericFilter((decimal)b.ModifiedDuration, term)));
 
+            var offerQtyTerms = SplitTerms(filterOfferQty);
+            if (offerQtyTerms.Length > 0)
+                query = query.Where(b => offerQtyTerms.Any(term => MatchesNumericFilter((decimal)b.OfferQty, term)));
+
             // Sorting
             query = sortColumn switch
             {
@@ -225,6 +240,7 @@ else
                 nameof(BondDTO.CurrentYield) => sortAscending ? query.OrderBy(b => b.CurrentYield) : query.OrderByDescending(b => b.CurrentYield),
                 nameof(BondDTO.Convexity) => sortAscending ? query.OrderBy(b => b.Convexity) : query.OrderByDescending(b => b.Convexity),
                 nameof(BondDTO.ModifiedDuration) => sortAscending ? query.OrderBy(b => b.ModifiedDuration) : query.OrderByDescending(b => b.ModifiedDuration),
+                nameof(BondDTO.OfferQty) => sortAscending ? query.OrderBy(b => b.OfferQty) : query.OrderByDescending(b => b.OfferQty),
                 _ => query
             };
 

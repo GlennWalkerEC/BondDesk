@@ -36,16 +36,17 @@ public class BondController : ControllerBase
 	{
 		return new BondDTO
 		{
-			Coupon = bond.Coupon,
+			Coupon = bond.Coupon * 100,
 			MaturityDate = bond.MaturityDate,
 			Epic = bond.Epic,
 			DirtyPrice = bond.DirtyPrice,
-			CurrentYield = bond.CurrentYield,
+			CurrentYield = bond.CurrentYield * 100,
 			AccruedInterest = bond.AccruedInterest,
 			Convexity = bond.Convexity,
 			ModifiedDuration = bond.ModifiedDuration,
 			PresentValueOverDirty = bond.PresentValueOverDirty,
-			YieldToMaturity = bond.YieldToMaturity
+			YieldToMaturity = bond.YieldToMaturity * 100,
+			OfferQty = bond.OfferQty
 		};
 	}
 }

@@ -13,4 +13,5 @@ public interface IBondEntity
     decimal ModifiedDuration { get; }
     decimal PresentValueOverDirty { get; }
 	decimal YieldToMaturity { get; }
+    decimal? OfferQty { get; }
 }

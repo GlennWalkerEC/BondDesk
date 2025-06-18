@@ -32,7 +32,10 @@ public class Bond : IGiltInfo, IBondEntity
 	public IBondQuoteData GetValuation() => _quoteRepo.BondValuation(Epic).Result;
 
 	public decimal DaysSinceLastCoupon => CalculateDaysSinceLastCoupon();
-	public decimal OfferPrice => GetValuation().Offer ?? throw new NullReferenceException(nameof(Epic));
+	public decimal OfferPrice => GetValuation().Offer ?? throw new NullReferenceException("Epic");
+	public decimal? OfferQty => GetValuation().OfferQty;
+	public decimal MidPrice => GetValuation().Mid ?? throw new NullReferenceException("Mid");
+	public decimal LastClose => GetValuation().Close ?? throw new NullReferenceException("Close");
 	public decimal AccruedDays => CalculateDaysSinceLastCoupon();
 	public decimal DaysSinceLastPayment => CalculateDaysSinceLastCouponPayment();
 	public decimal AccruedInterest => CalculateAccruedInterest();
@@ -42,7 +45,8 @@ public class Bond : IGiltInfo, IBondEntity
 	public decimal Convexity => CalculateConvexity();
 	public decimal ModifiedDuration => CalculateModifiedDuration();
 	public decimal PresentValueOverDirty => CalculatePresentValueOverDirty();
-	public decimal YieldToMaturity => CalculateYieldToMaturity(out _);
+	public decimal YieldToMaturity => CalculateYieldToMaturity();
+	public bool YieldToMaturityIsEstimate { get; protected set; }
 
 	protected IEnumerable<Coupon> LastAndRemainingCoupons()
 	{
@@ -86,7 +90,7 @@ public class Bond : IGiltInfo, IBondEntity
 
     protected decimal CalculateModifiedDuration()
     {
-        return CalculateMacaulayDuration() / (1 + CalculateYieldToMaturity(out _));
+        return CalculateMacaulayDuration() / (1 + CalculateYieldToMaturity());
     }
 
 	private decimal CalculateAccruedInterest()
@@ -101,7 +105,7 @@ public class Bond : IGiltInfo, IBondEntity
 		return (lastAndNext[1].Date - lastAndNext[0].Date).Days;
 	}
 
-	protected decimal CalculateYieldToMaturity(out bool isApproximate)
+	protected decimal CalculateYieldToMaturity()
 	{
 		decimal ytm = 0.045m; // Initial guess
 		decimal tolerance = 0.0001M;
@@ -122,13 +126,13 @@ public class Bond : IGiltInfo, IBondEntity
 			decimal newYTM = ytm - f / df;
 			if (Math.Abs(newYTM - ytm) < tolerance)
 			{
-				isApproximate = false;
+				YieldToMaturityIsEstimate = false;
 				return newYTM;
 			}
 			ytm = newYTM;
 		}
 
-		isApproximate = true;
+		YieldToMaturityIsEstimate = true;
 		return ytm;
 	}
 
@@ -136,7 +140,7 @@ public class Bond : IGiltInfo, IBondEntity
 	{
 		decimal duration = 0;
 		decimal totalPV = 0;
-		var ytm = CalculateYieldToMaturity(out _);
+		var ytm = CalculateYieldToMaturity();
 
 		for (int t = 1; t <= Tenor; t++)
 		{
@@ -156,7 +160,7 @@ public class Bond : IGiltInfo, IBondEntity
     {
         decimal convexity = 0;
         decimal totalPV = 0;
-		var ytm = CalculateYieldToMaturity(out _);
+		var ytm = CalculateYieldToMaturity();
 
 		for (int t = 1; t <= Tenor; t++)
         {
