@@ -13,6 +13,8 @@ public class Bond : IGiltInfo, IBondEntity
 	private readonly IDateTimeProvider _dateTimeProvider;
 	private readonly decimal _assumedReinvestmentRate;
 
+	private IBondQuoteData _valuation;
+
 	public Bond(IQuoteRepo quoteRepo, IGiltInfo giltInfo, IDateTimeProvider dateTimeProvider, decimal assumedReinvestmentRate)
 	{
 		_quoteRepo = quoteRepo ?? throw new ArgumentNullException(nameof(quoteRepo), "Quote repository cannot be null.");
@@ -20,6 +22,19 @@ public class Bond : IGiltInfo, IBondEntity
 		_dateTimeProvider = dateTimeProvider ?? throw new ArgumentNullException(nameof(dateTimeProvider), "DateTime provider cannot be null.");
 		_assumedReinvestmentRate = assumedReinvestmentRate;
 	}
+
+	protected IBondQuoteData Valuation
+	{
+		get
+		{
+			if (_valuation  == null)
+			{
+				_valuation = _quoteRepo.BondValuation(Epic).Result;
+			}
+			return _valuation;
+		}
+	}
+	public async Task GetValuation() => _valuation = await _quoteRepo.BondValuation(Epic);
 
 	public decimal FaceValue => _giltInfo.FaceValue;
 	public string Name => _giltInfo.Name;
@@ -29,13 +44,11 @@ public class Bond : IGiltInfo, IBondEntity
 	public string Epic => _giltInfo.Epic ?? throw new InvalidOperationException("Epic cannot be null.");
 	public decimal Tenor => (_giltInfo.MaturityDate - _dateTimeProvider.GetToday()).Days / 365m;
 
-	public IBondQuoteData GetValuation() => _quoteRepo.BondValuation(Epic).Result;
-
 	public decimal DaysSinceLastCoupon => CalculateDaysSinceLastCoupon();
-	public decimal OfferPrice => GetValuation().Offer ?? throw new NullReferenceException("Epic");
-	public decimal? OfferQty => GetValuation().OfferQty;
-	public decimal MidPrice => GetValuation().Mid ?? throw new NullReferenceException("Mid");
-	public decimal LastClose => GetValuation().Close ?? throw new NullReferenceException("Close");
+	public decimal OfferPrice => Valuation.Offer ?? throw new NullReferenceException("Epic");
+	public decimal? OfferQty => Valuation.OfferQty;
+	public decimal MidPrice => Valuation.Mid ?? throw new NullReferenceException("Mid");
+	public decimal LastClose => Valuation.Close ?? throw new NullReferenceException("Close");
 	public decimal AccruedDays => CalculateDaysSinceLastCoupon();
 	public decimal DaysSinceLastPayment => CalculateDaysSinceLastCouponPayment();
 	public decimal AccruedInterest => CalculateAccruedInterest();

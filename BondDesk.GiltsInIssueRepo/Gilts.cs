@@ -8,9 +8,9 @@ namespace BondDesk.GiltsInIssueRepo;
 
 public class Gilts : IGiltRepo
 {
-    public IEnumerable<IGiltInfo> GetAllGilts()
+    public async IAsyncEnumerable<IGiltInfo> GetAllGiltsAsync()
     {
-        yield return new GiltInfo("T25", "2% Treasury Gilt 2025", 2.00m, new DateTime(2025, 9, 7), new DateTime(2015, 3, 20));
+		yield return new GiltInfo("T25", "2% Treasury Gilt 2025", 2.00m, new DateTime(2025, 9, 7), new DateTime(2015, 3, 20));
         yield return new GiltInfo("TY25", "3½% Treasury Gilt 2025", 3.50m, new DateTime(2025, 10, 22), new DateTime(2023, 1, 18));
         yield return new GiltInfo("T26", "0 1/8% Treasury Gilt 2026", 0.125m, new DateTime(2026, 1, 30), new DateTime(2020, 6, 3));
         yield return new GiltInfo("TG26", "1½% Treasury Gilt 2026", 1.50m, new DateTime(2026, 7, 22), new DateTime(2016, 2, 18));

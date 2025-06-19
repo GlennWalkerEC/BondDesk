@@ -23,10 +23,10 @@ public class GiltsService : IGiltsService
 
 	public async IAsyncEnumerable<IBondEntity> GetGiltsAsync()
 	{
-		foreach (var giltInfo in _giltRepo.GetAllGilts())
+		await foreach (var giltInfo in _giltRepo.GetAllGiltsAsync())
 		{
 			var bond = new Bond(_lseRepo, giltInfo, _dateTimeProvider, AssumedReinvestmentRate);
-			Task.Run(bond.GetValuation); // Eagerly get valuation
+			await bond.GetValuation();
 			yield return bond;
 		}
 	}

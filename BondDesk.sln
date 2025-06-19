@@ -21,6 +21,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{02EA681E
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BondDesk.Domain.Tests", "BondDesk.Domain.Tests\BondDesk.Domain.Tests.csproj", "{46533BF5-7BEC-4A24-9345-556F7CA2BC9F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BondDesk.WinApp", "BondDesk.WinApp\BondDesk.WinApp.csproj", "{5F8C819D-ECB7-2D4D-DFC4-F4B4CC815966}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -59,6 +61,10 @@ Global
 		{46533BF5-7BEC-4A24-9345-556F7CA2BC9F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{46533BF5-7BEC-4A24-9345-556F7CA2BC9F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{46533BF5-7BEC-4A24-9345-556F7CA2BC9F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5F8C819D-ECB7-2D4D-DFC4-F4B4CC815966}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5F8C819D-ECB7-2D4D-DFC4-F4B4CC815966}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5F8C819D-ECB7-2D4D-DFC4-F4B4CC815966}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5F8C819D-ECB7-2D4D-DFC4-F4B4CC815966}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
