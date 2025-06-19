@@ -1,6 +1,6 @@
 ﻿namespace BondDesk.WinApp;
 
-partial class GiltsViewer
+partial class BondDesk
 {
     /// <summary>
     ///  Required designer variable.
@@ -175,7 +175,7 @@ partial class GiltsViewer
 		_bondsPanel.Size = new Size(1200, 500);
 		_bondsPanel.TabIndex = 0;
 		// 
-		// GiltsViewer
+		// BondDesk
 		// 
 		AutoScaleDimensions = new SizeF(7F, 15F);
 		AutoScaleMode = AutoScaleMode.Font;
@@ -185,8 +185,9 @@ partial class GiltsViewer
 		Controls.Add(_filterSortPanel);
 		Font = new Font("Consolas", 10F);
 		ForeColor = Color.White;
-		Name = "GiltsViewer";
-		Text = "Gilts Viewer";
+		Name = "BondDesk";
+		ShowIcon = false;
+		Text = "Bond Desk";
 		_filterSortPanel.ResumeLayout(false);
 		_filterSortPanel.PerformLayout();
 		ResumeLayout(false);

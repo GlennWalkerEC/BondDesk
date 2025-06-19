@@ -7,14 +7,14 @@ using System.Globalization;
 
 namespace BondDesk.WinApp;
 
-public partial class GiltsViewer : Form
+public partial class BondDesk : Form
 {
 	private readonly IGiltsService _giltsService;
 	private List<BondViewModel> _bonds = new();
 	private bool _sortAscending = true;
 	private string? _sortColumn = null;
 
-	public GiltsViewer()
+	public BondDesk()
 	{
 		_giltsService = new GiltsService(new CachedRepo(), new Gilts(), new SimpleDateTimeProvider());
 		InitializeComponent();
