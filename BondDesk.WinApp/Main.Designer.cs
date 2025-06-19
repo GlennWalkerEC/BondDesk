@@ -19,8 +19,6 @@ partial class GiltsViewer
     private System.Windows.Forms.TextBox _filterPresentValueOverDirtyTextBox;
     private System.Windows.Forms.TextBox _filterYieldToMaturityTextBox;
     private System.Windows.Forms.TextBox _filterOfferQtyTextBox;
-    private System.Windows.Forms.ComboBox _sortComboBox;
-    private System.Windows.Forms.Button _sortOrderButton;
     private System.Windows.Forms.FlowLayoutPanel _bondsPanel;
     private System.Windows.Forms.Panel _filterSortPanel;
 
@@ -57,8 +55,6 @@ partial class GiltsViewer
 		_filterPresentValueOverDirtyTextBox = new TextBox();
 		_filterYieldToMaturityTextBox = new TextBox();
 		_filterOfferQtyTextBox = new TextBox();
-		_sortComboBox = new ComboBox();
-		_sortOrderButton = new Button();
 		_filterSortPanel = new Panel();
 		_bondsPanel = new FlowLayoutPanel();
 		_filterSortPanel.SuspendLayout();
@@ -148,33 +144,6 @@ partial class GiltsViewer
 		_filterOfferQtyTextBox.Size = new Size(100, 23);
 		_filterOfferQtyTextBox.TabIndex = 11;
 		// 
-		// _sortComboBox
-		// 
-		_sortComboBox.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-		_sortComboBox.BackColor = Color.FromArgb(30, 34, 36);
-		_sortComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
-		_sortComboBox.Font = new Font("Consolas", 10F);
-		_sortComboBox.ForeColor = Color.FromArgb(255, 140, 0);
-		_sortComboBox.Items.AddRange(new object[] { "Name", "Coupon", "MaturityDate", "Epic", "DirtyPrice", "CurrentYield", "AccruedInterest", "Convexity", "ModifiedDuration", "PresentValueOverDirty", "YieldToMaturity", "OfferQty" });
-		_sortComboBox.Location = new Point(12, 12);
-		_sortComboBox.Name = "_sortComboBox";
-		_sortComboBox.Size = new Size(1200, 23);
-		_sortComboBox.TabIndex = 12;
-		// 
-		// _sortOrderButton
-		// 
-		_sortOrderButton.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-		_sortOrderButton.BackColor = Color.FromArgb(30, 34, 36);
-		_sortOrderButton.FlatStyle = FlatStyle.Flat;
-		_sortOrderButton.Font = new Font("Consolas", 10F);
-		_sortOrderButton.ForeColor = Color.FromArgb(255, 255, 0);
-		_sortOrderButton.Location = new Point(220, 12);
-		_sortOrderButton.Name = "_sortOrderButton";
-		_sortOrderButton.Size = new Size(1080, 23);
-		_sortOrderButton.TabIndex = 13;
-		_sortOrderButton.Text = "Asc";
-		_sortOrderButton.UseVisualStyleBackColor = false;
-		// 
 		// _filterSortPanel
 		// 
 		_filterSortPanel.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
@@ -191,8 +160,6 @@ partial class GiltsViewer
 		_filterSortPanel.Controls.Add(_filterPresentValueOverDirtyTextBox);
 		_filterSortPanel.Controls.Add(_filterYieldToMaturityTextBox);
 		_filterSortPanel.Controls.Add(_filterOfferQtyTextBox);
-		_filterSortPanel.Controls.Add(_sortComboBox);
-		_filterSortPanel.Controls.Add(_sortOrderButton);
 		_filterSortPanel.Location = new Point(0, 0);
 		_filterSortPanel.Name = "_filterSortPanel";
 		_filterSortPanel.Size = new Size(1200, 70);
