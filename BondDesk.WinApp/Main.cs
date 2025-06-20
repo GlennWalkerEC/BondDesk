@@ -14,13 +14,14 @@ public partial class BondDesk : Form
 	private List<BondViewModel> _bonds = new();
 	private bool _sortAscending = true;
 	private string? _sortColumn = null;
+	private ToolTip _bondToolTip = new ToolTip(); // Add this as a field
 
 	public BondDesk()
 	{
 		_giltsService = new GiltsService(new CachedRepo(), new Gilts(), new SimpleDateTimeProvider());
 		InitializeComponent();
 
-		 // Start maximized
+		// Start maximized
 		WindowState = FormWindowState.Maximized;
 
 		// Wire up all filter TextBoxes in new order
@@ -97,7 +98,7 @@ public partial class BondDesk : Form
 		var filterFg = System.Drawing.Color.White;
 		var filterFont = new System.Drawing.Font("Consolas", 10F, System.Drawing.FontStyle.Regular);
 
-		 // New order of filter textboxes
+		// New order of filter textboxes
 		_filterEpicTextBox.PlaceholderText = "Epic";
 		_filterNameTextBox.PlaceholderText = "Name";
 		_filterMaturityDateTextBox.PlaceholderText = "Maturity";
@@ -161,10 +162,12 @@ public partial class BondDesk : Form
 		var textHeader = System.Drawing.Color.White;
 		var textPV = System.Drawing.Color.White;
 		var font = new System.Drawing.Font("Consolas", 10F, System.Drawing.FontStyle.Regular);
+		var underline = new System.Drawing.Font("Consolas", 10F, System.Drawing.FontStyle.Underline);
 		var headerFont = new System.Drawing.Font("Consolas", 9F, System.Drawing.FontStyle.Bold);
 
 		_bondsPanel.SuspendLayout();
 		_bondsPanel.Controls.Clear();
+		_bondToolTip.RemoveAll(); // Clear previous tooltips
 		var filtered = _bonds.Where(b =>
 			(string.IsNullOrWhiteSpace(_filterEpicTextBox.Text) || (b.Epic?.IndexOf(_filterEpicTextBox.Text, StringComparison.OrdinalIgnoreCase) >= 0)) &&
 			(string.IsNullOrWhiteSpace(_filterNameTextBox.Text) || (b.Name?.IndexOf(_filterNameTextBox.Text, StringComparison.OrdinalIgnoreCase) >= 0)) &&
@@ -192,7 +195,7 @@ public partial class BondDesk : Form
 		int labelSpacing = 8;
 		int labelWidth = (panelWidth - (labelSpacing * (labelCount - 1))) / labelCount;
 
-		 // New column order and display names
+		// New column order and display names
 		(string prop, string text, System.Drawing.Color color)[] headers = new[]
 		{
 			("Epic", "Epic", textString),
@@ -234,26 +237,151 @@ public partial class BondDesk : Form
 		}
 		_bondsPanel.Controls.Add(headerPanel);
 
+		var maxCoupon = filtered.Any() ? filtered.Min(x => x.Coupon) : 0m;
+		var maxYtm = filtered.Any() ? filtered.Max(x => x.YieldToMaturity) : 0m;
+		var maxModDuration = filtered.Any() ? filtered.Min(x => x.ModifiedDuration) : 0m;
+		var maxPvDirty = filtered.Any() ? filtered.Max(x => x.PresentValueOverDirty) : 0m;
+		var maxYield = filtered.Any() ? filtered.Max(x => x.CurrentYield) : 0m;
+		var maxConv = filtered.Any() ? filtered.Max(x => x.Convexity) : 0m;
+		var minDirty = filtered.Any() ? filtered.Min(x => x.DirtyPrice) : 0m;
+		var minAcc = filtered.Any() ? filtered.Min(x => x.AccruedInterest) : 0m;
+
 		foreach (var bond in filtered)
 		{
 			var panel = new Panel { Height = 50, Dock = DockStyle.Top, Width = panelWidth, Margin = new Padding(3), BackColor = panelBg };
 			int left = 0;
-			panel.Controls.Add(new Label { Text = bond.Epic, Left = left, Top = 8, Width = labelWidth, AutoSize = false, ForeColor = textString, Font = font, BackColor = panelBg, TextAlign = System.Drawing.ContentAlignment.MiddleCenter }); left += labelWidth + labelSpacing;
-			panel.Controls.Add(new Label { Text = bond.Name, Left = left, Top = 8, Width = labelWidth, AutoSize = false, ForeColor = textString, Font = font, BackColor = panelBg, TextAlign = System.Drawing.ContentAlignment.MiddleCenter }); left += labelWidth + labelSpacing;
-			panel.Controls.Add(new Label { Text = bond.MaturityDate.ToString("yyyy-MM-dd"), Left = left, Top = 8, Width = labelWidth, AutoSize = false, ForeColor = textDate, Font = font, BackColor = panelBg, TextAlign = System.Drawing.ContentAlignment.MiddleCenter }); left += labelWidth + labelSpacing;
-			panel.Controls.Add(new Label { Text = bond.AccruedInterest.ToString("F4", CultureInfo.InvariantCulture), Left = left, Top = 8, Width = labelWidth, AutoSize = false, ForeColor = textDecimal, Font = font, BackColor = panelBg, TextAlign = System.Drawing.ContentAlignment.MiddleCenter }); left += labelWidth + labelSpacing;
-			panel.Controls.Add(new Label { Text = (bond.Coupon * 100).ToString("F4", CultureInfo.InvariantCulture) + "%", Left = left, Top = 8, Width = labelWidth, AutoSize = false, ForeColor = textDecimal, Font = font, BackColor = panelBg, TextAlign = System.Drawing.ContentAlignment.MiddleCenter }); left += labelWidth + labelSpacing;
-			panel.Controls.Add(new Label { Text = (bond.YieldToMaturity * 100).ToString("F4", CultureInfo.InvariantCulture) + "%", Left = left, Top = 8, Width = labelWidth, AutoSize = false, ForeColor = textDecimal, Font = font, BackColor = panelBg, TextAlign = System.Drawing.ContentAlignment.MiddleCenter }); left += labelWidth + labelSpacing;
-			panel.Controls.Add(new Label { Text = (bond.CurrentYield * 100).ToString("F4", CultureInfo.InvariantCulture) + "%", Left = left, Top = 8, Width = labelWidth, AutoSize = false, ForeColor = textDecimal, Font = font, BackColor = panelBg, TextAlign = System.Drawing.ContentAlignment.MiddleCenter }); left += labelWidth + labelSpacing;
-			panel.Controls.Add(new Label { Text = bond.DirtyPrice.ToString("F4", CultureInfo.InvariantCulture), Left = left, Top = 8, Width = labelWidth, AutoSize = false, ForeColor = textDecimal, Font = font, BackColor = panelBg, TextAlign = System.Drawing.ContentAlignment.MiddleCenter }); left += labelWidth + labelSpacing;
-			panel.Controls.Add(new Label { Text = bond.PresentValueOverDirty.ToString("F4", CultureInfo.InvariantCulture), Left = left, Top = 8, Width = labelWidth, AutoSize = false, ForeColor = textDecimal, Font = font, BackColor = panelBg, TextAlign = System.Drawing.ContentAlignment.MiddleCenter }); left += labelWidth + labelSpacing;
-			panel.Controls.Add(new Label { Text = bond.ModifiedDuration.ToString("F4", CultureInfo.InvariantCulture), Left = left, Top = 8, Width = labelWidth, AutoSize = false, ForeColor = textDecimal, Font = font, BackColor = panelBg, TextAlign = System.Drawing.ContentAlignment.MiddleCenter }); left += labelWidth + labelSpacing;
-			panel.Controls.Add(new Label { Text = bond.Convexity.ToString("F4", CultureInfo.InvariantCulture), Left = left, Top = 8, Width = labelWidth, AutoSize = false, ForeColor = textDecimal, Font = font, BackColor = panelBg, TextAlign = System.Drawing.ContentAlignment.MiddleCenter }); left += labelWidth + labelSpacing;
-			panel.Controls.Add(new Label { Text = bond.PresentValue.ToString("F4", CultureInfo.InvariantCulture), Left = left, Top = 8, Width = labelWidth, AutoSize = false, ForeColor = textPV, Font = font, BackColor = panelBg, TextAlign = System.Drawing.ContentAlignment.MiddleCenter });
+			Label[] labels = new Label[]
+			{
+				new Label
+				{
+					Text = bond.Epic,
+					Width = labelWidth,
+					AutoSize = false,
+					ForeColor = textString,
+					Font = font,
+					BackColor = panelBg,
+					TextAlign = System.Drawing.ContentAlignment.MiddleCenter
+				},
+				new Label
+				{
+					Text = bond.Name,
+					Width = labelWidth,
+					AutoSize = false,
+					ForeColor = textString,
+					Font = font,
+					BackColor = panelBg,
+					TextAlign = System.Drawing.ContentAlignment.MiddleCenter
+				},
+				new Label
+				{
+					Text = bond.MaturityDate.ToString("yyyy-MM-dd"),
+					Width = labelWidth,
+					AutoSize = false,
+					ForeColor = textDate,
+					Font = font,
+					BackColor = panelBg,
+					TextAlign = System.Drawing.ContentAlignment.MiddleCenter
+				},
+				new Label
+				{
+					Text = bond.AccruedInterest.ToString("F4", CultureInfo.InvariantCulture),
+					Width = labelWidth,
+					AutoSize = false,
+					ForeColor = textDecimal,
+					Font = bond.AccruedInterest == minAcc ? underline : font,
+					BackColor = panelBg,
+					TextAlign = System.Drawing.ContentAlignment.MiddleCenter
+				},
+				new Label
+				{
+					Text = (bond.Coupon * 100).ToString("F4", CultureInfo.InvariantCulture) + "%",
+					Width = labelWidth,
+					AutoSize = false,
+					ForeColor = textDecimal,
+					Font = bond.Coupon == maxCoupon ? underline : font,
+					BackColor = panelBg,
+					TextAlign = System.Drawing.ContentAlignment.MiddleCenter
+				},
+				new Label
+				{
+					Text = (bond.YieldToMaturity * 100).ToString("F4", CultureInfo.InvariantCulture) + "%",
+					Width = labelWidth,
+					AutoSize = false,
+					ForeColor = textDecimal,
+					Font = bond.YieldToMaturity == maxYtm ? underline : font,
+					BackColor = panelBg,
+					TextAlign = System.Drawing.ContentAlignment.MiddleCenter
+				},
+				new Label
+				{
+					Text = (bond.CurrentYield * 100).ToString("F4", CultureInfo.InvariantCulture) + "%",
+					Width = labelWidth,
+					AutoSize = false,
+					ForeColor = textDecimal,
+					Font = bond.CurrentYield == maxYield ? underline : font,
+					BackColor = panelBg,
+					TextAlign = System.Drawing.ContentAlignment.MiddleCenter
+				},
+				new Label
+				{
+					Text = bond.DirtyPrice.ToString("F4", CultureInfo.InvariantCulture),
+					Width = labelWidth,
+					AutoSize = false,
+					ForeColor = textDecimal,
+					Font = bond.DirtyPrice == minDirty ? underline : font,
+					BackColor = panelBg,
+					TextAlign = System.Drawing.ContentAlignment.MiddleCenter
+				},
+				new Label
+				{
+					Text = bond.PresentValueOverDirty.ToString("F4", CultureInfo.InvariantCulture),
+					Width = labelWidth,
+					AutoSize = false,
+					ForeColor = textDecimal,
+					Font = bond.PresentValueOverDirty == maxPvDirty ? underline : font,
+					BackColor = panelBg,
+					TextAlign = System.Drawing.ContentAlignment.MiddleCenter
+				},
+				new Label
+				{
+					Text = bond.ModifiedDuration.ToString("F4", CultureInfo.InvariantCulture),
+					Width = labelWidth,
+					AutoSize = false,
+					ForeColor = textDecimal,
+					Font = bond.ModifiedDuration == maxModDuration ? underline : font,
+					BackColor = panelBg,
+					TextAlign = System.Drawing.ContentAlignment.MiddleCenter
+				},
+				new Label
+				{
+					Text = bond.Convexity.ToString("F4", CultureInfo.InvariantCulture),
+					Width = labelWidth,
+					AutoSize = false,
+					ForeColor = textDecimal,
+					Font = bond.Convexity == maxConv ? underline : font,
+					BackColor = panelBg,
+					TextAlign = System.Drawing.ContentAlignment.MiddleCenter
+				},
+				new Label
+				{
+					Text = bond.PresentValue.ToString("F4", CultureInfo.InvariantCulture),
+					Width = labelWidth,
+					AutoSize = false,
+					ForeColor = textPV,
+					Font = font,
+					BackColor = panelBg,
+					TextAlign = System.Drawing.ContentAlignment.MiddleCenter
+				}
+			};
+			for (int i = 0; i < labels.Length; i++)
+			{
+				labels[i].Left = left;
+				labels[i].Top = 8;
+				panel.Controls.Add(labels[i]);
+				_bondToolTip.SetToolTip(labels[i], bond.ToolTipText); // Attach tooltip to each label
+				left += labelWidth + labelSpacing;
+			}
 			_bondsPanel.Controls.Add(panel);
-
-			var tooltip = new ToolTip { ToolTipTitle = bond.Epic };
-			tooltip.SetToolTip(panel, bond.ToolTipText);
 		}
 		_bondsPanel.ResumeLayout();
 	}
