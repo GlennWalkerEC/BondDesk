@@ -4,6 +4,7 @@ using BondDesk.Domain.Interfaces.Services;
 using BondDesk.GiltsInIssueRepo;
 using BondDesk.QuoteProvider;
 using System.Globalization;
+using System.Threading.Tasks;
 
 namespace BondDesk.WinApp;
 
@@ -35,6 +36,7 @@ public partial class BondDesk : Form
 		_filterOfferQtyTextBox.TextChanged += (s, e) => UpdateBondPanels();
 		_filterModifiedDurationTextBox.TextChanged += (s, e) => UpdateBondPanels();
 		_filterConvexityTextBox.TextChanged += (s, e) => UpdateBondPanels();
+		_filterPresentValueTextBox.TextChanged += (s, e) => UpdateBondPanels();
 
 		Load += Form1_Load;
 		Resize += (s, e) => { ResizeFilterControls(); UpdateBondPanels(); };
@@ -44,6 +46,13 @@ public partial class BondDesk : Form
 	}
 
 	private async void Form1_Load(object? sender, EventArgs e)
+	{
+		await UpdateDataAsync();
+		UpdateBondPanels();
+		_filterModifiedDurationTextBox.Focus();
+	}
+
+	private async Task UpdateDataAsync()
 	{
 		_bonds.Clear();
 		await foreach (var bond in _giltsService.GetGiltsAsync())
@@ -61,10 +70,10 @@ public partial class BondDesk : Form
 				ModifiedDuration = bond.ModifiedDuration,
 				PresentValueOverDirty = bond.PresentValueOverDirty,
 				YieldToMaturity = bond.YieldToMaturity,
-				OfferQty = bond.OfferQty
+				OfferQty = bond.OfferQty,
+				PresentValue = bond.PresentValue
 			});
 		}
-		UpdateBondPanels();
 	}
 
 	private void ApplyFilterSortTheme()
@@ -86,11 +95,12 @@ public partial class BondDesk : Form
 		_filterOfferQtyTextBox.PlaceholderText = "Offer Qty";
 		_filterModifiedDurationTextBox.PlaceholderText = "Modified Duration";
 		_filterConvexityTextBox.PlaceholderText = "Convexity";
+		_filterPresentValueTextBox.PlaceholderText = "Present Value";
 
 		TextBox[] filters = {
 			_filterEpicTextBox, _filterNameTextBox, _filterMaturityDateTextBox, _filterAccruedInterestTextBox, _filterCouponTextBox,
 			_filterYieldToMaturityTextBox, _filterCurrentYieldTextBox, _filterDirtyPriceTextBox, _filterPresentValueOverDirtyTextBox,
-			_filterOfferQtyTextBox, _filterModifiedDurationTextBox, _filterConvexityTextBox
+			_filterOfferQtyTextBox, _filterModifiedDurationTextBox, _filterConvexityTextBox, _filterPresentValueTextBox
 		};
 		foreach (var tb in filters)
 		{
@@ -105,7 +115,7 @@ public partial class BondDesk : Form
 	private void ResizeFilterControls()
 	{
 		// Layout filter and sort controls inside _filterSortPanel
-		int totalFilters = 12;
+		int totalFilters = 13;
 		int spacing = 8;
 		int left = 12;
 		int availableWidth = _filterSortPanel.ClientSize.Width - (left * 2) - (spacing * (totalFilters - 1));
@@ -115,7 +125,7 @@ public partial class BondDesk : Form
 			 // New order of filter textboxes
 			_filterEpicTextBox, _filterNameTextBox, _filterMaturityDateTextBox, _filterAccruedInterestTextBox, _filterCouponTextBox,
 			_filterYieldToMaturityTextBox, _filterCurrentYieldTextBox, _filterDirtyPriceTextBox, _filterPresentValueOverDirtyTextBox,
-			_filterOfferQtyTextBox, _filterModifiedDurationTextBox, _filterConvexityTextBox
+			_filterOfferQtyTextBox, _filterModifiedDurationTextBox, _filterConvexityTextBox, _filterPresentValueTextBox
 		};
 		for (int i = 0; i < filters.Length; i++)
 		{
@@ -133,8 +143,9 @@ public partial class BondDesk : Form
 		// Color scheme by data type
 		var textString = System.Drawing.Color.FromArgb(0, 255, 0); // Epic, Name
 		var textDate = System.Drawing.Color.FromArgb(255, 255, 0); // Maturity
-		var textDecimal = System.Drawing.Color.FromArgb(255, 140, 0); // Accrued, Coupon, YTM, Yield, Dirty, PV/Dirty, OfferQty, ModDur, Convexity
+		var textDecimal = System.Drawing.Color.FromArgb(255, 140, 0); // Accrued, Coupon, YTM, Yield, Dirty, PV/Dirty, OfferQty, ModDur, Convexity, DayChangePc, PresentValue
 		var textHeader = System.Drawing.Color.White;
+		var textPV = System.Drawing.Color.White;
 		var font = new System.Drawing.Font("Consolas", 10F, System.Drawing.FontStyle.Regular);
 		var headerFont = new System.Drawing.Font("Consolas", 9F, System.Drawing.FontStyle.Bold);
 
@@ -152,7 +163,8 @@ public partial class BondDesk : Form
 			(string.IsNullOrWhiteSpace(_filterPresentValueOverDirtyTextBox.Text) || FilterDecimal(b.PresentValueOverDirty, _filterPresentValueOverDirtyTextBox.Text)) &&
 			(string.IsNullOrWhiteSpace(_filterOfferQtyTextBox.Text) || (b.OfferQty != null && FilterDecimal(b.OfferQty.Value, _filterOfferQtyTextBox.Text))) &&
 			(string.IsNullOrWhiteSpace(_filterModifiedDurationTextBox.Text) || FilterDecimal(b.ModifiedDuration, _filterModifiedDurationTextBox.Text)) &&
-			(string.IsNullOrWhiteSpace(_filterConvexityTextBox.Text) || FilterDecimal(b.Convexity, _filterConvexityTextBox.Text))
+			(string.IsNullOrWhiteSpace(_filterConvexityTextBox.Text) || FilterDecimal(b.Convexity, _filterConvexityTextBox.Text)) &&
+			(string.IsNullOrWhiteSpace(_filterPresentValueTextBox.Text) || FilterDecimal(b.PresentValue, _filterPresentValueTextBox.Text))
 		).ToList();
 
 		if (!string.IsNullOrEmpty(_sortColumn))
@@ -163,7 +175,7 @@ public partial class BondDesk : Form
 		}
 
 		int panelWidth = _bondsPanel.ClientSize.Width - 10;
-		int labelCount = 12;
+		int labelCount = 14;
 		int labelSpacing = 8;
 		int labelWidth = (panelWidth - (labelSpacing * (labelCount - 1))) / labelCount;
 
@@ -181,7 +193,9 @@ public partial class BondDesk : Form
 			("PresentValueOverDirty", "PV/Dirty", textDecimal),
 			("OfferQty", "Offer Qty", textDecimal),
 			("ModifiedDuration", "Modified Duration", textDecimal),
-			("Convexity", "Convexity", textDecimal)
+			("Convexity", "Convexity", textDecimal),
+			("DayChangePc", "Day Change %", textDecimal),
+			("PresentValue", "Present Value", textPV)
 		};
 		// Header row
 		var headerPanel = new Panel { Height = 40, Dock = DockStyle.Top, Width = panelWidth, Margin = new Padding(3), BackColor = darkBg };
@@ -224,7 +238,9 @@ public partial class BondDesk : Form
 			panel.Controls.Add(new Label { Text = bond.PresentValueOverDirty.ToString("F4", CultureInfo.InvariantCulture), Left = left, Top = 8, Width = labelWidth, AutoSize = false, ForeColor = textDecimal, Font = font, BackColor = panelBg, TextAlign = System.Drawing.ContentAlignment.MiddleCenter }); left += labelWidth + labelSpacing;
 			panel.Controls.Add(new Label { Text = bond.OfferQty?.ToString("F4", CultureInfo.InvariantCulture) ?? string.Empty, Left = left, Top = 8, Width = labelWidth, AutoSize = false, ForeColor = textDecimal, Font = font, BackColor = panelBg, TextAlign = System.Drawing.ContentAlignment.MiddleCenter }); left += labelWidth + labelSpacing;
 			panel.Controls.Add(new Label { Text = bond.ModifiedDuration.ToString("F4", CultureInfo.InvariantCulture), Left = left, Top = 8, Width = labelWidth, AutoSize = false, ForeColor = textDecimal, Font = font, BackColor = panelBg, TextAlign = System.Drawing.ContentAlignment.MiddleCenter }); left += labelWidth + labelSpacing;
-			panel.Controls.Add(new Label { Text = bond.Convexity.ToString("F4", CultureInfo.InvariantCulture), Left = left, Top = 8, Width = labelWidth, AutoSize = false, ForeColor = textDecimal, Font = font, BackColor = panelBg, TextAlign = System.Drawing.ContentAlignment.MiddleCenter });
+			panel.Controls.Add(new Label { Text = bond.Convexity.ToString("F4", CultureInfo.InvariantCulture), Left = left, Top = 8, Width = labelWidth, AutoSize = false, ForeColor = textDecimal, Font = font, BackColor = panelBg, TextAlign = System.Drawing.ContentAlignment.MiddleCenter }); left += labelWidth + labelSpacing;
+			panel.Controls.Add(new Label { Text = bond.DayChangePc.ToString("F4", CultureInfo.InvariantCulture) + "%", Left = left, Top = 8, Width = labelWidth, AutoSize = false, ForeColor = textDecimal, Font = font, BackColor = panelBg, TextAlign = System.Drawing.ContentAlignment.MiddleCenter }); left += labelWidth + labelSpacing;
+			panel.Controls.Add(new Label { Text = bond.PresentValue.ToString("F4", CultureInfo.InvariantCulture), Left = left, Top = 8, Width = labelWidth, AutoSize = false, ForeColor = textPV, Font = font, BackColor = panelBg, TextAlign = System.Drawing.ContentAlignment.MiddleCenter });
 			_bondsPanel.Controls.Add(panel);
 		}
 		_bondsPanel.ResumeLayout();
@@ -295,6 +311,8 @@ public class BondViewModel
 	public decimal PresentValueOverDirty { get; set; }
 	public decimal YieldToMaturity { get; set; }
 	public decimal? OfferQty { get; set; }
+	public decimal DayChangePc { get; set; }
+	public decimal PresentValue { get; set; }
 
 	public object? GetPropertyValue(string? prop)
 	{

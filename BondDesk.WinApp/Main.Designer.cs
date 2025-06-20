@@ -19,6 +19,7 @@ partial class BondDesk
     private System.Windows.Forms.TextBox _filterPresentValueOverDirtyTextBox;
     private System.Windows.Forms.TextBox _filterYieldToMaturityTextBox;
     private System.Windows.Forms.TextBox _filterOfferQtyTextBox;
+    private System.Windows.Forms.TextBox _filterPresentValueTextBox;
     private System.Windows.Forms.FlowLayoutPanel _bondsPanel;
     private System.Windows.Forms.Panel _filterSortPanel;
 
@@ -55,6 +56,7 @@ partial class BondDesk
 		_filterPresentValueOverDirtyTextBox = new TextBox();
 		_filterYieldToMaturityTextBox = new TextBox();
 		_filterOfferQtyTextBox = new TextBox();
+		 _filterPresentValueTextBox = new TextBox();
 		_filterSortPanel = new Panel();
 		_bondsPanel = new FlowLayoutPanel();
 		_filterSortPanel.SuspendLayout();
@@ -144,6 +146,13 @@ partial class BondDesk
 		_filterOfferQtyTextBox.Size = new Size(100, 23);
 		_filterOfferQtyTextBox.TabIndex = 11;
 		// 
+		// _filterPresentValueTextBox
+		// 
+		_filterPresentValueTextBox.Location = new Point(0, 0);
+		_filterPresentValueTextBox.Name = "_filterPresentValueTextBox";
+		_filterPresentValueTextBox.Size = new Size(100, 23);
+		_filterPresentValueTextBox.TabIndex = 12;
+		// 
 		// _filterSortPanel
 		// 
 		_filterSortPanel.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
@@ -160,6 +169,7 @@ partial class BondDesk
 		_filterSortPanel.Controls.Add(_filterPresentValueOverDirtyTextBox);
 		_filterSortPanel.Controls.Add(_filterYieldToMaturityTextBox);
 		_filterSortPanel.Controls.Add(_filterOfferQtyTextBox);
+		_filterSortPanel.Controls.Add(_filterPresentValueTextBox);
 		_filterSortPanel.Location = new Point(0, 0);
 		_filterSortPanel.Name = "_filterSortPanel";
 		_filterSortPanel.Size = new Size(1200, 70);

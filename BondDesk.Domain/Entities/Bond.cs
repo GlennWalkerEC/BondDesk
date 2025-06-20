@@ -45,10 +45,8 @@ public class Bond : IGiltInfo, IBondEntity
 	public decimal Tenor => (_giltInfo.MaturityDate - _dateTimeProvider.GetToday()).Days / 365m;
 
 	public decimal DaysSinceLastCoupon => CalculateDaysSinceLastCoupon();
-	public decimal OfferPrice => Valuation.Offer ?? throw new NullReferenceException("Epic");
+	public decimal OfferPrice => Valuation.Offer ?? Valuation.LastPrice ?? throw new NullReferenceException("LastPrice");
 	public decimal? OfferQty => Valuation.OfferQty;
-	public decimal MidPrice => Valuation.Mid ?? throw new NullReferenceException("Mid");
-	public decimal LastClose => Valuation.Close ?? throw new NullReferenceException("Close");
 	public decimal AccruedDays => CalculateDaysSinceLastCoupon();
 	public decimal DaysSinceLastPayment => CalculateDaysSinceLastCouponPayment();
 	public decimal AccruedInterest => CalculateAccruedInterest();
@@ -60,6 +58,7 @@ public class Bond : IGiltInfo, IBondEntity
 	public decimal PresentValueOverDirty => CalculatePresentValueOverDirty();
 	public decimal YieldToMaturity => CalculateYieldToMaturity();
 	public bool YieldToMaturityIsEstimate { get; protected set; }
+	public decimal PresentValue => CalculatePresentValue();
 
 	protected IEnumerable<Coupon> LastAndRemainingCoupons()
 	{
@@ -191,6 +190,13 @@ public class Bond : IGiltInfo, IBondEntity
 
 	public decimal CalculatePresentValueOverDirty()
 	{
+		decimal principalPV = CalculatePresentValue();
+
+		return principalPV / DirtyPrice;
+	}
+
+	private decimal CalculatePresentValue()
+	{
 		var years = Convert.ToDecimal((MaturityDate - _dateTimeProvider.GetToday()).TotalDays / 365.2425);
 
 		var compoundingPerYear = 1; // Annual compounding
@@ -207,6 +213,6 @@ public class Bond : IGiltInfo, IBondEntity
 			principalPV += coupon.CalculatePresentValue(_dateTimeProvider, _assumedReinvestmentRate);
 		}
 
-		return principalPV / DirtyPrice;
+		return principalPV;
 	}
 }

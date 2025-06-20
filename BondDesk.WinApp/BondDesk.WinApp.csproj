@@ -1,6 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
+    <Content Include="bond-icon-13.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\BondDesk.BondProvider\BondDesk.BondProvider.csproj" />
     <ProjectReference Include="..\BondDesk.Domain\BondDesk.Domain.csproj" />
     <ProjectReference Include="..\BondDesk.GiltsInIssueRepo\BondDesk.GiltsInIssueRepo.csproj" />
@@ -14,6 +18,7 @@
     <Nullable>enable</Nullable>
     <UseWindowsForms>true</UseWindowsForms>
     <ImplicitUsings>enable</ImplicitUsings>
+    <ApplicationIcon>bond-icon-13.ico</ApplicationIcon>
   </PropertyGroup>
 
 </Project>
