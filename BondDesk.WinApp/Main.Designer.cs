@@ -18,7 +18,6 @@ partial class BondDesk
     private System.Windows.Forms.TextBox _filterModifiedDurationTextBox;
     private System.Windows.Forms.TextBox _filterPresentValueOverDirtyTextBox;
     private System.Windows.Forms.TextBox _filterYieldToMaturityTextBox;
-    private System.Windows.Forms.TextBox _filterOfferQtyTextBox;
     private System.Windows.Forms.TextBox _filterPresentValueTextBox;
     private System.Windows.Forms.FlowLayoutPanel _bondsPanel;
     private System.Windows.Forms.Panel _filterSortPanel;
@@ -55,26 +54,25 @@ partial class BondDesk
 		_filterModifiedDurationTextBox = new TextBox();
 		_filterPresentValueOverDirtyTextBox = new TextBox();
 		_filterYieldToMaturityTextBox = new TextBox();
-		_filterOfferQtyTextBox = new TextBox();
 		 _filterPresentValueTextBox = new TextBox();
 		_filterSortPanel = new Panel();
 		_bondsPanel = new FlowLayoutPanel();
 		_filterSortPanel.SuspendLayout();
 		SuspendLayout();
 		// 
+		// _filterEpicTextBox
+		// 
+		_filterEpicTextBox.Location = new Point(0, 0);
+		_filterEpicTextBox.Name = "_filterEpicTextBox";
+		_filterEpicTextBox.Size = new Size(100, 23);
+		_filterEpicTextBox.TabIndex = 0;
+		// 
 		// _filterNameTextBox
 		// 
 		_filterNameTextBox.Location = new Point(0, 0);
 		_filterNameTextBox.Name = "_filterNameTextBox";
 		_filterNameTextBox.Size = new Size(100, 23);
-		_filterNameTextBox.TabIndex = 0;
-		// 
-		// _filterCouponTextBox
-		// 
-		_filterCouponTextBox.Location = new Point(0, 0);
-		_filterCouponTextBox.Name = "_filterCouponTextBox";
-		_filterCouponTextBox.Size = new Size(100, 23);
-		_filterCouponTextBox.TabIndex = 1;
+		_filterNameTextBox.TabIndex = 1;
 		// 
 		// _filterMaturityDateTextBox
 		// 
@@ -83,75 +81,68 @@ partial class BondDesk
 		_filterMaturityDateTextBox.Size = new Size(100, 23);
 		_filterMaturityDateTextBox.TabIndex = 2;
 		// 
-		// _filterEpicTextBox
-		// 
-		_filterEpicTextBox.Location = new Point(0, 0);
-		_filterEpicTextBox.Name = "_filterEpicTextBox";
-		_filterEpicTextBox.Size = new Size(100, 23);
-		_filterEpicTextBox.TabIndex = 3;
-		// 
-		// _filterDirtyPriceTextBox
-		// 
-		_filterDirtyPriceTextBox.Location = new Point(0, 0);
-		_filterDirtyPriceTextBox.Name = "_filterDirtyPriceTextBox";
-		_filterDirtyPriceTextBox.Size = new Size(100, 23);
-		_filterDirtyPriceTextBox.TabIndex = 4;
-		// 
-		// _filterCurrentYieldTextBox
-		// 
-		_filterCurrentYieldTextBox.Location = new Point(0, 0);
-		_filterCurrentYieldTextBox.Name = "_filterCurrentYieldTextBox";
-		_filterCurrentYieldTextBox.Size = new Size(100, 23);
-		_filterCurrentYieldTextBox.TabIndex = 5;
-		// 
 		// _filterAccruedInterestTextBox
 		// 
 		_filterAccruedInterestTextBox.Location = new Point(0, 0);
 		_filterAccruedInterestTextBox.Name = "_filterAccruedInterestTextBox";
 		_filterAccruedInterestTextBox.Size = new Size(100, 23);
-		_filterAccruedInterestTextBox.TabIndex = 6;
+		_filterAccruedInterestTextBox.TabIndex = 3;
 		// 
-		// _filterConvexityTextBox
+		// _filterCouponTextBox
 		// 
-		_filterConvexityTextBox.Location = new Point(0, 0);
-		_filterConvexityTextBox.Name = "_filterConvexityTextBox";
-		_filterConvexityTextBox.Size = new Size(100, 23);
-		_filterConvexityTextBox.TabIndex = 7;
-		// 
-		// _filterModifiedDurationTextBox
-		// 
-		_filterModifiedDurationTextBox.Location = new Point(0, 0);
-		_filterModifiedDurationTextBox.Name = "_filterModifiedDurationTextBox";
-		_filterModifiedDurationTextBox.Size = new Size(100, 23);
-		_filterModifiedDurationTextBox.TabIndex = 8;
-		// 
-		// _filterPresentValueOverDirtyTextBox
-		// 
-		_filterPresentValueOverDirtyTextBox.Location = new Point(0, 0);
-		_filterPresentValueOverDirtyTextBox.Name = "_filterPresentValueOverDirtyTextBox";
-		_filterPresentValueOverDirtyTextBox.Size = new Size(100, 23);
-		_filterPresentValueOverDirtyTextBox.TabIndex = 9;
+		_filterCouponTextBox.Location = new Point(0, 0);
+		_filterCouponTextBox.Name = "_filterCouponTextBox";
+		_filterCouponTextBox.Size = new Size(100, 23);
+		_filterCouponTextBox.TabIndex = 4;
 		// 
 		// _filterYieldToMaturityTextBox
 		// 
 		_filterYieldToMaturityTextBox.Location = new Point(0, 0);
 		_filterYieldToMaturityTextBox.Name = "_filterYieldToMaturityTextBox";
 		_filterYieldToMaturityTextBox.Size = new Size(100, 23);
-		_filterYieldToMaturityTextBox.TabIndex = 10;
+		_filterYieldToMaturityTextBox.TabIndex = 5;
 		// 
-		// _filterOfferQtyTextBox
+		// _filterCurrentYieldTextBox
 		// 
-		_filterOfferQtyTextBox.Location = new Point(0, 0);
-		_filterOfferQtyTextBox.Name = "_filterOfferQtyTextBox";
-		_filterOfferQtyTextBox.Size = new Size(100, 23);
-		_filterOfferQtyTextBox.TabIndex = 11;
+		_filterCurrentYieldTextBox.Location = new Point(0, 0);
+		_filterCurrentYieldTextBox.Name = "_filterCurrentYieldTextBox";
+		_filterCurrentYieldTextBox.Size = new Size(100, 23);
+		_filterCurrentYieldTextBox.TabIndex = 6;
+		// 
+		// _filterDirtyPriceTextBox
+		// 
+		_filterDirtyPriceTextBox.Location = new Point(0, 0);
+		_filterDirtyPriceTextBox.Name = "_filterDirtyPriceTextBox";
+		_filterDirtyPriceTextBox.Size = new Size(100, 23);
+		_filterDirtyPriceTextBox.TabIndex = 7;
+		// 
+		// _filterPresentValueOverDirtyTextBox
+		// 
+		_filterPresentValueOverDirtyTextBox.Location = new Point(0, 0);
+		_filterPresentValueOverDirtyTextBox.Name = "_filterPresentValueOverDirtyTextBox";
+		_filterPresentValueOverDirtyTextBox.Size = new Size(100, 23);
+		_filterPresentValueOverDirtyTextBox.TabIndex = 8;
+		// 
+		// _filterModifiedDurationTextBox
+		// 
+		_filterModifiedDurationTextBox.Location = new Point(0, 0);
+		_filterModifiedDurationTextBox.Name = "_filterModifiedDurationTextBox";
+		_filterModifiedDurationTextBox.Size = new Size(100, 23);
+		_filterModifiedDurationTextBox.TabIndex = 9;
+		// 
+		// _filterConvexityTextBox
+		// 
+		_filterConvexityTextBox.Location = new Point(0, 0);
+		_filterConvexityTextBox.Name = "_filterConvexityTextBox";
+		_filterConvexityTextBox.Size = new Size(100, 23);
+		_filterConvexityTextBox.TabIndex = 10;
 		// 
 		// _filterPresentValueTextBox
 		// 
 		_filterPresentValueTextBox.Location = new Point(0, 0);
 		_filterPresentValueTextBox.Name = "_filterPresentValueTextBox";
 		_filterPresentValueTextBox.Size = new Size(100, 23);
-		_filterPresentValueTextBox.TabIndex = 12;
+		_filterPresentValueTextBox.TabIndex = 11;
 		// 
 		// _filterSortPanel
 		// 
@@ -168,11 +159,10 @@ partial class BondDesk
 		_filterSortPanel.Controls.Add(_filterModifiedDurationTextBox);
 		_filterSortPanel.Controls.Add(_filterPresentValueOverDirtyTextBox);
 		_filterSortPanel.Controls.Add(_filterYieldToMaturityTextBox);
-		_filterSortPanel.Controls.Add(_filterOfferQtyTextBox);
 		_filterSortPanel.Controls.Add(_filterPresentValueTextBox);
 		_filterSortPanel.Location = new Point(0, 0);
 		_filterSortPanel.Name = "_filterSortPanel";
-		_filterSortPanel.Size = new Size(1200, 70);
+		_filterSortPanel.Size = new Size(1200, 50);
 		_filterSortPanel.TabIndex = 1;
 		// 
 		// _bondsPanel

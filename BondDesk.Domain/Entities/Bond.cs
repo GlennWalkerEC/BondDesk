@@ -3,6 +3,8 @@ using BondDesk.Domain.Interfaces.Models;
 using BondDesk.Domain.Interfaces.Providers;
 using BondDesk.Domain.Interfaces.Repos;
 using BondDesk.Domain.Statics;
+using System.ComponentModel.DataAnnotations;
+using System.Text;
 
 namespace BondDesk.Domain.Entities;
 
@@ -93,12 +95,7 @@ public class Bond : IGiltInfo, IBondEntity
 		return Convert.ToDecimal(Math.Abs((today - LastAndRemainingCoupons().Min(x => x.PaymentDate)).Days));
 	}
 
-	protected decimal CalculateDirtyPrice()
-	{
-		var lastAndNext = LastAndNextCoupons().ToArray();
-		decimal accruedInterest = (FaceValue * Coupon * CalculateDaysSinceLastCoupon()) / GetCouponPeriodDays();
-		return OfferPrice + accruedInterest;
-	}
+	protected decimal CalculateDirtyPrice() => OfferPrice + CalculateAccruedInterest();	
 
     protected decimal CalculateModifiedDuration()
     {
@@ -214,5 +211,23 @@ public class Bond : IGiltInfo, IBondEntity
 		}
 
 		return principalPV;
+	}
+
+	public override string ToString()
+	{
+		var sb = new StringBuilder();
+		sb.AppendLine($"{nameof(FaceValue)}: {FaceValue}");
+		sb.AppendLine($"{nameof(Coupon)}: {Coupon}");
+		sb.AppendLine($"{nameof(IssueDate)}: {IssueDate}");
+		sb.AppendLine($"{nameof(MaturityDate)}: {MaturityDate}");
+		sb.AppendLine($"{nameof(Tenor)}: {Tenor}");
+		sb.AppendLine($"{nameof(DaysSinceLastCoupon)}: {DaysSinceLastCoupon}");
+		sb.AppendLine($"{nameof(OfferPrice)}: {OfferPrice}");
+		sb.AppendLine($"{nameof(OfferQty)}: {OfferQty}");
+		sb.AppendLine($"{nameof(AccruedDays)}: {AccruedDays}");
+		sb.AppendLine($"{nameof(DaysSinceLastPayment)}: {DaysSinceLastPayment}");
+		sb.AppendLine($"{nameof(AccruedInterest)}: {AccruedInterest}");
+		sb.AppendLine($"{nameof(YieldToMaturityIsEstimate)}: {YieldToMaturityIsEstimate}");
+		return sb.ToString();
 	}
 }
