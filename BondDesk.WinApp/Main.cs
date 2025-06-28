@@ -43,6 +43,8 @@ public partial class BondDesk : Form
 
 		ApplyFilterSortTheme();
 		ResizeFilterControls();
+
+		Text = $"Bond Desk - {_giltsService.AssumedReinvestmentRate.ToString("P4")}";
 	}
 
 	private async void Form1_Load(object? sender, EventArgs e)

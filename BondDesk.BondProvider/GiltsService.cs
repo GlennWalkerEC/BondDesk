@@ -12,7 +12,7 @@ public class GiltsService : IGiltsService
 	protected readonly IGiltRepo _giltRepo;
 	protected readonly IDateTimeProvider _dateTimeProvider;
 
-	protected static decimal AssumedReinvestmentRate = 0.02832m; // TODO: Move to Config
+	public decimal AssumedReinvestmentRate => 0.02832m; // TODO: Move to Config
 
 	public GiltsService(IQuoteRepo lseRepo, IGiltRepo giltRepo, IDateTimeProvider dateTimeProvider)
 	{
