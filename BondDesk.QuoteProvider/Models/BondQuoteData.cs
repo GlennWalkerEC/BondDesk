@@ -25,7 +25,8 @@ internal class BondQuoteData : IBondQuoteData
     public string? LastTraded => _innerBond.LastTraded;
     public decimal? Low => _innerBond.Low;
     public string? Market => _innerBond.Market;
-    public decimal? Mid => _innerBond.Mid;
+	public decimal? MarketSize => _innerBond.MarketSize;
+	public decimal? Mid => _innerBond.Mid;
     public decimal? Offer => _innerBond.Offer;
     public decimal? OfferQty => _innerBond.OfferQty;
     public decimal? Open => _innerBond.Open;

@@ -47,7 +47,10 @@ internal class Refinitive : IBondQuoteData
     [JsonPropertyName("market")]
     public string? Market { get; set; }
 
-    [JsonPropertyName("mid")]
+	[JsonPropertyName("marketsize")]
+	public decimal? MarketSize { get; set; }
+
+	[JsonPropertyName("mid")]
     public decimal? Mid { get; set; }
 
     [JsonPropertyName("offer")]

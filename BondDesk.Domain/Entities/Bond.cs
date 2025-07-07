@@ -42,13 +42,14 @@ public class Bond : IGiltInfo, IBondEntity
 	public string Name => _giltInfo.Name;
 	public decimal Coupon => _giltInfo.Coupon / 100;
 	public DateTime IssueDate => _giltInfo.IssueDate;
-	public DateTime MaturityDate => _giltInfo.MaturityDate;
+	public DateTime MaturityDate => _giltInfo.MaturityDate;	
 	public string Epic => _giltInfo.Epic ?? throw new InvalidOperationException("Epic cannot be null.");
 	public decimal Tenor => (_giltInfo.MaturityDate - _dateTimeProvider.GetToday()).Days / 365m;
 
 	public decimal DaysSinceLastCoupon => CalculateDaysSinceLastCoupon();
 	public decimal OfferPrice => Valuation.Offer ?? Valuation.LastPrice ?? throw new NullReferenceException("LastPrice");
 	public decimal? OfferQty => Valuation.OfferQty;
+	public decimal MarketSize => Valuation.MarketSize ?? 0m;
 	public decimal AccruedDays => CalculateDaysSinceLastCoupon();
 	public decimal DaysSinceLastPayment => CalculateDaysSinceLastCouponPayment();
 	public decimal AccruedInterest => CalculateAccruedInterest();
@@ -224,6 +225,7 @@ public class Bond : IGiltInfo, IBondEntity
 		sb.AppendLine($"{nameof(DaysSinceLastCoupon)}: {DaysSinceLastCoupon}");
 		sb.AppendLine($"{nameof(OfferPrice)}: {OfferPrice}");
 		sb.AppendLine($"{nameof(OfferQty)}: {OfferQty}");
+		sb.AppendLine($"{nameof(MarketSize)}: {MarketSize}");
 		sb.AppendLine($"{nameof(AccruedDays)}: {AccruedDays}");
 		sb.AppendLine($"{nameof(DaysSinceLastPayment)}: {DaysSinceLastPayment}");
 		sb.AppendLine($"{nameof(AccruedInterest)}: {AccruedInterest}");

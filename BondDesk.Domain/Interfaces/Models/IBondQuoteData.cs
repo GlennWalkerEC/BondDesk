@@ -16,7 +16,8 @@ public interface IBondQuoteData
     string? LastTraded { get; }
     decimal? Low { get; }
     string? Market { get; }
-    decimal? Mid { get; }
+	decimal? MarketSize { get; }
+	decimal? Mid { get; }
     decimal? Offer { get; }
     decimal? OfferQty { get; }
     decimal? Open { get; }
