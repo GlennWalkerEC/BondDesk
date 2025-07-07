@@ -3,7 +3,7 @@ using BondDesk.Domain.Interfaces.Models;
 using BondDesk.Domain.Interfaces.Providers;
 using BondDesk.Domain.Interfaces.Repos;
 using BondDesk.Domain.Statics;
-using System.ComponentModel.DataAnnotations;
+using System.Runtime.InteropServices;
 using System.Text;
 
 namespace BondDesk.Domain.Entities;
@@ -46,10 +46,18 @@ public class Bond : IGiltInfo, IBondEntity
 	public string Epic => _giltInfo.Epic ?? throw new InvalidOperationException("Epic cannot be null.");
 	public decimal Tenor => (_giltInfo.MaturityDate - _dateTimeProvider.GetToday()).Days / 365m;
 
-	public decimal DaysSinceLastCoupon => CalculateDaysSinceLastCoupon();
+	
 	public decimal OfferPrice => Valuation.Offer ?? Valuation.LastPrice ?? throw new NullReferenceException("LastPrice");
 	public decimal? OfferQty => Valuation.OfferQty;
 	public decimal MarketSize => Valuation.MarketSize ?? 0m;
+	public decimal? LastPrice => Valuation.LastPrice;
+	public decimal? Mid => Valuation.Mid;
+	public decimal? Open => Valuation.Open;
+	public decimal? Close => Valuation.Close;
+
+	public decimal? LastPricePercentageChange => CalculateLastPricePercentageChange();
+	public decimal? OpenPricePercentageChange => CalculateOpenPricePercentageChange();
+	public decimal DaysSinceLastCoupon => CalculateDaysSinceLastCoupon();
 	public decimal AccruedDays => CalculateDaysSinceLastCoupon();
 	public decimal DaysSinceLastPayment => CalculateDaysSinceLastCouponPayment();
 	public decimal AccruedInterest => CalculateAccruedInterest();
@@ -62,6 +70,18 @@ public class Bond : IGiltInfo, IBondEntity
 	public decimal YieldToMaturity => CalculateYieldToMaturity();
 	public bool YieldToMaturityIsEstimate { get; protected set; }
 	public decimal PresentValue => CalculatePresentValue();
+
+	protected decimal? CalculateLastPricePercentageChange()
+	{
+		if (Close == null || LastPrice == null) return null;
+		return ((LastPrice - Close) / Close) * 100;
+	}
+
+	protected decimal? CalculateOpenPricePercentageChange()
+	{
+		if (Close == null || Open == null) return null;
+		return ((Open - Close) / Close) * 100;
+	}
 
 	protected IEnumerable<Coupon> LastAndRemainingCoupons()
 	{
@@ -230,6 +250,13 @@ public class Bond : IGiltInfo, IBondEntity
 		sb.AppendLine($"{nameof(DaysSinceLastPayment)}: {DaysSinceLastPayment}");
 		sb.AppendLine($"{nameof(AccruedInterest)}: {AccruedInterest}");
 		sb.AppendLine($"{nameof(YieldToMaturityIsEstimate)}: {YieldToMaturityIsEstimate}");
+		sb.AppendLine($"{nameof(PresentValue)}: {PresentValue}");
+		sb.AppendLine($"{nameof(Close)}: {Close}");
+		sb.AppendLine($"{nameof(LastPrice)}: {LastPrice}");
+		sb.AppendLine($"{nameof(Mid)}: {Mid}");
+		sb.AppendLine($"{nameof(Open)}: {Open}");
+		sb.AppendLine($"{nameof(LastPricePercentageChange)}: {LastPricePercentageChange}");
+		sb.AppendLine($"{nameof(OpenPricePercentageChange)}: {OpenPricePercentageChange}");
 		return sb.ToString();
 	}
 }
