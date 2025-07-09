@@ -18,22 +18,7 @@ public class Gilts : IGiltRepo
 
 	public async IAsyncEnumerable<IGiltInfo> GetAllGiltsAsync()
 	{
-		//try
-		//{
-		//	Debug.WriteLine($"Fetching LSE Gilts");
-		//	var response = await client!.GetStringAsync($"https://api.londonstockexchange.com/api/gw/lse/search/autocomplete/instruments?q=TREASURY%20GILT&size=500");
-
-		//	var refinitive = System.Text.Json.JsonSerializer.Deserialize<GiltInfo>(response);
-
-		//	Debug.WriteLine($"Success LSE Gilts");
-		//	return refinitive;
-		//}
-		//catch
-		//{
-		//	Console.WriteLine($"Fetching LSE Gilts = !SKIPPED!");
-		//	throw new Exception($"Failed to fetch LSE Gilts");
-		//}
-
+		// Sourced from https://giltsyield.com/bond/ as of June 2024
 		yield return new GiltInfo("T25", "2% Treasury Gilt 2025", 2.00m, new DateTime(2025, 9, 7), new DateTime(2015, 3, 20));
 		yield return new GiltInfo("TY25", "3½% Treasury Gilt 2025", 3.50m, new DateTime(2025, 10, 22), new DateTime(2023, 1, 18));
 		yield return new GiltInfo("T26", "0 1/8% Treasury Gilt 2026", 0.125m, new DateTime(2026, 1, 30), new DateTime(2020, 6, 3));
@@ -49,7 +34,7 @@ public class Gilts : IGiltRepo
 		yield return new GiltInfo("TG28", "1 5/8% Treasury Gilt 2028", 1.625m, new DateTime(2028, 10, 22), new DateTime(2018, 3, 16));
 		yield return new GiltInfo("TR28", "6% Treasury Stock 2028", 6.00m, new DateTime(2028, 12, 7), new DateTime(1998, 1, 29));
 		yield return new GiltInfo("TG29", "0½% Treasury Gilt 2029", 0.50m, new DateTime(2029, 1, 31), new DateTime(2021, 9, 2));
-		yield return new GiltInfo("TS29", "4 1/8% Treasury Gilt 2029", 4.12m, new DateTime(2029, 7, 22), new DateTime(2024, 5, 1));
+		yield return new GiltInfo("TS29", "4 1/8% Treasury Gilt 2029", 4.125m, new DateTime(2029, 7, 22), new DateTime(2024, 5, 1));
 		yield return new GiltInfo("TR29", "0 7/8% Treasury Gilt 2029", 0.875m, new DateTime(2029, 10, 22), new DateTime(2019, 6, 19));
 		yield return new GiltInfo("T30", "4 3/8% Treasury Gilt 2030", 4.375m, new DateTime(2030, 3, 7), new DateTime(2025, 1, 9));
 		yield return new GiltInfo("TG30", "0 3/8% Treasury Gilt 2030", 0.375m, new DateTime(2030, 10, 22), new DateTime(2020, 5, 13));
