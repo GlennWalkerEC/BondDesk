@@ -1,15 +1,15 @@
 ﻿using BondDesk.Domain.Interfaces.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Text.Json.Serialization;
 
 namespace BondDesk.GiltsInIssueRepo.Models;
 internal class GiltInfo : IGiltInfo
 {
-    public string Epic { get; set; }
-    public string Name { get; set; }
+	[JsonPropertyName("code")]
+	public string Epic { get; set; }
+
+	[JsonPropertyName("description")]
+	public string Name { get; set; }
+
     public decimal Coupon { get; set; }
     public DateTime MaturityDate { get; set; }
     public DateTime IssueDate { get; }
