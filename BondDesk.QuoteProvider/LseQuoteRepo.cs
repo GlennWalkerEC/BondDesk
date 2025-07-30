@@ -26,10 +26,10 @@ public class LseQuoteRepo : IQuoteRepo
 			Debug.WriteLine($"Success LSE: {symbol} = {refinitive.LastPrice / 100}");
 			return refinitive;
 		}
-		catch
+		catch(Exception ex)
 		{
 			Console.WriteLine($"{symbol} = !SKIPPED!");
-			throw new Exception($"Failed to fetch data for symbol: {symbol}");
+			throw new Exception($"Failed to fetch data for symbol: {symbol}", ex);
 		}
 	}
 }
