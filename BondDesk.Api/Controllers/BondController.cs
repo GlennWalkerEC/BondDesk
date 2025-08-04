@@ -46,7 +46,8 @@ public class BondController : ControllerBase
 			ModifiedDuration = bond.ModifiedDuration,
 			PresentValueOverDirty = bond.PresentValueOverDirty,
 			YieldToMaturity = bond.YieldToMaturity * 100,
-			MarketSize = bond.MarketSize
+			MarketSize = bond.MarketSize,
+			DV01 = bond.DV01
 		};
 	}
 }

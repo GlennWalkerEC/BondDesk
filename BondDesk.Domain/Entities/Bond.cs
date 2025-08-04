@@ -3,7 +3,6 @@ using BondDesk.Domain.Interfaces.Models;
 using BondDesk.Domain.Interfaces.Providers;
 using BondDesk.Domain.Interfaces.Repos;
 using BondDesk.Domain.Statics;
-using System.Runtime.InteropServices;
 using System.Text;
 
 namespace BondDesk.Domain.Entities;
@@ -70,6 +69,7 @@ public class Bond : IGiltInfo, IBondEntity
 	public decimal YieldToMaturity => CalculateYieldToMaturity();
 	public bool YieldToMaturityIsEstimate { get; protected set; }
 	public decimal PresentValue => CalculatePresentValue();
+	public decimal DV01 => CalculateDV01();
 
 	protected decimal? CalculateLastPricePercentageChange()
 	{
@@ -234,6 +234,11 @@ public class Bond : IGiltInfo, IBondEntity
 		return principalPV;
 	}
 
+	private decimal CalculateDV01()
+	{
+	    return ModifiedDuration * DirtyPrice * 0.01m;
+	}
+
 	public override string ToString()
 	{
 		var sb = new StringBuilder();
@@ -257,6 +262,8 @@ public class Bond : IGiltInfo, IBondEntity
 		sb.AppendLine($"{nameof(Open)}: {Open}");
 		sb.AppendLine($"{nameof(LastPricePercentageChange)}: {LastPricePercentageChange}");
 		sb.AppendLine($"{nameof(OpenPricePercentageChange)}: {OpenPricePercentageChange}");
+		sb.AppendLine($"{nameof(Convexity)}: {Convexity}");
+		sb.AppendLine($"{nameof(DV01)}: {DV01}");
 		return sb.ToString();
 	}
 }
