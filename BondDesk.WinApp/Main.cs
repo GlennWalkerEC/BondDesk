@@ -4,7 +4,7 @@ using BondDesk.Domain.Interfaces.Services;
 using BondDesk.GiltsInIssueRepo;
 using BondDesk.QuoteProvider;
 using System.Globalization;
-using System.Threading.Tasks;
+
 
 namespace BondDesk.WinApp;
 
@@ -35,7 +35,7 @@ public partial class BondDesk : Form
 		_filterDirtyPriceTextBox.TextChanged += (s, e) => UpdateBondPanels();
 		_filterPresentValueOverDirtyTextBox.TextChanged += (s, e) => UpdateBondPanels();
 		_filterModifiedDurationTextBox.TextChanged += (s, e) => UpdateBondPanels();
-		_filterConvexityTextBox.TextChanged += (s, e) => UpdateBondPanels();
+		_filterDV1KQTextBox.TextChanged += (s, e) => UpdateBondPanels();
 		_filterPresentValueTextBox.TextChanged += (s, e) => UpdateBondPanels();
 
 		Load += Form1_Load;
@@ -51,7 +51,6 @@ public partial class BondDesk : Form
 	{
 		await UpdateDataAsync();
 		UpdateBondPanels();
-		_filterModifiedDurationTextBox.Focus();
 	}
 
 	private async Task UpdateDataAsync()
@@ -68,7 +67,7 @@ public partial class BondDesk : Form
 				DirtyPrice = bond.DirtyPrice,
 				CurrentYield = bond.CurrentYield,
 				AccruedInterest = bond.AccruedInterest,
-				Convexity = bond.Convexity,
+				DV1KQ = bond.DV1KQ,
 				ModifiedDuration = bond.ModifiedDuration,
 				PresentValueOverDirty = bond.PresentValueOverDirty,
 				YieldToMaturity = bond.YieldToMaturity,
@@ -111,13 +110,13 @@ public partial class BondDesk : Form
 		_filterDirtyPriceTextBox.PlaceholderText = "Dirty";
 		_filterPresentValueOverDirtyTextBox.PlaceholderText = "PV/Dirty";
 		_filterModifiedDurationTextBox.PlaceholderText = "Modified Duration";
-		_filterConvexityTextBox.PlaceholderText = "Convexity";
+		_filterDV1KQTextBox.PlaceholderText = "DV1KQ";
 		_filterPresentValueTextBox.PlaceholderText = "Present Value";
 
 		TextBox[] filters = {
 			_filterEpicTextBox, _filterNameTextBox, _filterMaturityDateTextBox, _filterAccruedInterestTextBox, _filterCouponTextBox,
 			_filterYieldToMaturityTextBox, _filterCurrentYieldTextBox, _filterDirtyPriceTextBox, _filterPresentValueOverDirtyTextBox,
-			_filterModifiedDurationTextBox, _filterConvexityTextBox, _filterPresentValueTextBox
+			_filterModifiedDurationTextBox, _filterDV1KQTextBox, _filterPresentValueTextBox
 		};
 		foreach (var tb in filters)
 		{
@@ -142,7 +141,7 @@ public partial class BondDesk : Form
 			 // New order of filter textboxes
 			_filterEpicTextBox, _filterNameTextBox, _filterMaturityDateTextBox, _filterAccruedInterestTextBox, _filterCouponTextBox,
 			_filterYieldToMaturityTextBox, _filterCurrentYieldTextBox, _filterDirtyPriceTextBox, _filterPresentValueOverDirtyTextBox,
-			_filterModifiedDurationTextBox, _filterConvexityTextBox, _filterPresentValueTextBox
+			_filterModifiedDurationTextBox, _filterDV1KQTextBox, _filterPresentValueTextBox
 		};
 		for (int i = 0; i < filters.Length; i++)
 		{
@@ -153,6 +152,20 @@ public partial class BondDesk : Form
 		}
 	}
 
+	private bool StringFilterMatches(string? value, string filter)
+	{
+		if (string.IsNullOrWhiteSpace(filter)) return true;
+		var terms = filter.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+		if (terms.Length == 0) return true;
+		if (string.IsNullOrEmpty(value)) return false;
+		foreach (var term in terms)
+		{
+			if (value.IndexOf(term, StringComparison.OrdinalIgnoreCase) >= 0)
+				return true;
+		}
+		return false;
+	}
+
 	private void UpdateBondPanels()
 	{
 		var darkBg = System.Drawing.Color.FromArgb(20, 24, 26);
@@ -160,7 +173,7 @@ public partial class BondDesk : Form
 		// Color scheme by data type
 		var textString = System.Drawing.Color.FromArgb(0, 255, 0); // Epic, Name
 		var textDate = System.Drawing.Color.FromArgb(255, 255, 0); // Maturity
-		var textDecimal = System.Drawing.Color.FromArgb(255, 140, 0); // Accrued, Coupon, YTM, Yield, Dirty, PV/Dirty, OfferQty, ModDur, Convexity, DayChangePc, PresentValue
+		var textDecimal = System.Drawing.Color.FromArgb(255, 140, 0); // Accrued, Coupon, YTM, Yield, Dirty, PV/Dirty, OfferQty, ModDur, DV1K, DayChangePc, PresentValue
 		var textHeader = System.Drawing.Color.White;
 		var textPV = System.Drawing.Color.White;
 		var font = new System.Drawing.Font("Consolas", 10F, System.Drawing.FontStyle.Regular);
@@ -171,8 +184,8 @@ public partial class BondDesk : Form
 		_bondsPanel.Controls.Clear();
 		_bondToolTip.RemoveAll(); // Clear previous tooltips
 		var filtered = _bonds.Where(b =>
-			(string.IsNullOrWhiteSpace(_filterEpicTextBox.Text) || (b.Epic?.IndexOf(_filterEpicTextBox.Text, StringComparison.OrdinalIgnoreCase) >= 0)) &&
-			(string.IsNullOrWhiteSpace(_filterNameTextBox.Text) || (b.Name?.IndexOf(_filterNameTextBox.Text, StringComparison.OrdinalIgnoreCase) >= 0)) &&
+			StringFilterMatches(b.Epic, _filterEpicTextBox.Text) &&
+			StringFilterMatches(b.Name, _filterNameTextBox.Text) &&
 			(string.IsNullOrWhiteSpace(_filterMaturityDateTextBox.Text) || b.MaturityDate.ToString("yyyy-MM-dd").Contains(_filterMaturityDateTextBox.Text, StringComparison.OrdinalIgnoreCase)) &&
 			(string.IsNullOrWhiteSpace(_filterAccruedInterestTextBox.Text) || FilterDecimal(b.AccruedInterest, _filterAccruedInterestTextBox.Text)) &&
 			(string.IsNullOrWhiteSpace(_filterCouponTextBox.Text) || FilterDecimal(b.Coupon, _filterCouponTextBox.Text, 100.0)) &&
@@ -181,7 +194,7 @@ public partial class BondDesk : Form
 			(string.IsNullOrWhiteSpace(_filterDirtyPriceTextBox.Text) || FilterDecimal(b.DirtyPrice, _filterDirtyPriceTextBox.Text)) &&
 			(string.IsNullOrWhiteSpace(_filterPresentValueOverDirtyTextBox.Text) || FilterDecimal(b.PresentValueOverDirty, _filterPresentValueOverDirtyTextBox.Text)) &&
 			(string.IsNullOrWhiteSpace(_filterModifiedDurationTextBox.Text) || FilterDecimal(b.ModifiedDuration, _filterModifiedDurationTextBox.Text)) &&
-			(string.IsNullOrWhiteSpace(_filterConvexityTextBox.Text) || FilterDecimal(b.Convexity, _filterConvexityTextBox.Text)) &&
+			(string.IsNullOrWhiteSpace(_filterDV1KQTextBox.Text) || FilterDecimal(b.DV1KQ, _filterDV1KQTextBox.Text)) &&
 			(string.IsNullOrWhiteSpace(_filterPresentValueTextBox.Text) || FilterDecimal(b.PresentValue, _filterPresentValueTextBox.Text))
 		).ToList();
 
@@ -210,7 +223,7 @@ public partial class BondDesk : Form
 			("DirtyPrice", "Dirty", textDecimal),
 			("PresentValueOverDirty", "NPV/Dirty", textDecimal),
 			("ModifiedDuration", "Modified Duration", textDecimal),
-			("Convexity", "Convexity", textDecimal),
+			("DV1KQ", "DV1KQ", textDecimal),
 			("PresentValue", "Present Value", textPV)
 		};
 		// Header row
@@ -244,7 +257,7 @@ public partial class BondDesk : Form
 		var maxModDuration = filtered.Any() ? filtered.Min(x => x.ModifiedDuration) : 0m;
 		var maxPvDirty = filtered.Any() ? filtered.Max(x => x.PresentValueOverDirty) : 0m;
 		var maxYield = filtered.Any() ? filtered.Max(x => x.CurrentYield) : 0m;
-		var maxConv = filtered.Any() ? filtered.Max(x => x.Convexity) : 0m;
+		var maxDV1K = filtered.Any() ? filtered.Max(x => x.DV1KQ) : 0m;
 		var minDirty = filtered.Any() ? filtered.Min(x => x.DirtyPrice) : 0m;
 		var minAcc = filtered.Any() ? filtered.Min(x => x.AccruedInterest) : 0m;
 
@@ -356,11 +369,11 @@ public partial class BondDesk : Form
 				},
 				new Label
 				{
-					Text = bond.Convexity.ToString("F4", CultureInfo.InvariantCulture),
+					Text = bond.DV1KQ.ToString("F4", CultureInfo.InvariantCulture),
 					Width = labelWidth,
 					AutoSize = false,
 					ForeColor = textDecimal,
-					Font = bond.Convexity == maxConv ? underline : font,
+					Font = bond.DV1KQ == maxDV1K ? underline : font,
 					BackColor = panelBg,
 					TextAlign = System.Drawing.ContentAlignment.MiddleCenter
 				},
@@ -450,7 +463,7 @@ public class BondViewModel
 	public decimal DirtyPrice { get; set; }
 	public decimal CurrentYield { get; set; }
 	public decimal AccruedInterest { get; set; }
-	public decimal Convexity { get; set; }
+	public decimal DV1KQ { get; set; }
 	public decimal ModifiedDuration { get; set; }
 	public decimal PresentValueOverDirty { get; set; }
 	public decimal YieldToMaturity { get; set; }

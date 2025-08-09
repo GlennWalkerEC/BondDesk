@@ -13,5 +13,5 @@ public class BondDTO
 	public decimal PresentValueOverDirty { get; set; }
 	public decimal YieldToMaturity { get; set; }
 	public decimal? MarketSize { get; set; }
-	public decimal DV01 { get; set; }
+	public decimal DV1KQ { get; set; }
 }
