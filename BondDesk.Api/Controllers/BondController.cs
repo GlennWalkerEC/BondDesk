@@ -47,7 +47,7 @@ public class BondController : ControllerBase
 			PresentValueOverDirty = bond.PresentValueOverDirty,
 			YieldToMaturity = bond.YieldToMaturity * 100,
 			MarketSize = bond.MarketSize,
-			DV1KQ = bond.DV1KQ
+			DV1KQ = bond.DV1KGBP
 		};
 	}
 }

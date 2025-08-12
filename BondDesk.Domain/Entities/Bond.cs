@@ -69,7 +69,7 @@ public class Bond : IGiltInfo, IBondEntity
 	public decimal YieldToMaturity => CalculateYieldToMaturity();
 	public bool YieldToMaturityIsEstimate { get; protected set; }
 	public decimal PresentValue => CalculatePresentValue();
-	public decimal DV1KQ => CalculateDV1K();
+	public decimal DV1KGBP => CalculateDV1KGBP();
 
 	protected decimal? CalculateLastPricePercentageChange()
 	{
@@ -234,9 +234,9 @@ public class Bond : IGiltInfo, IBondEntity
 		return principalPV;
 	}
 
-	private decimal CalculateDV1K()
+	private decimal CalculateDV1KGBP()
 	{
-	    return ModifiedDuration * OfferPrice / 1000m;
+	    return ((ModifiedDuration * OfferPrice) * (1000 / OfferPrice)) / 1000m;
 	}
 
 	public override string ToString()
@@ -263,7 +263,7 @@ public class Bond : IGiltInfo, IBondEntity
 		sb.AppendLine($"{nameof(LastPricePercentageChange)}: {LastPricePercentageChange}");
 		sb.AppendLine($"{nameof(OpenPricePercentageChange)}: {OpenPricePercentageChange}");
 		sb.AppendLine($"{nameof(Convexity)}: {Convexity}");
-		sb.AppendLine($"{nameof(DV1KQ)}: {DV1KQ}");
+		sb.AppendLine($"{nameof(DV1KGBP)}: {DV1KGBP}");
 		return sb.ToString();
 	}
 }

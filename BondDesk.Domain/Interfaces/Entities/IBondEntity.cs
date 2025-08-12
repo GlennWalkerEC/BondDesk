@@ -15,7 +15,7 @@ public interface IBondEntity
 	decimal YieldToMaturity { get; }
     decimal PresentValue { get; }
     decimal MarketSize { get; }
-    decimal DV1KQ { get; }
+    decimal DV1KGBP { get; }
 
 	public string ToString();
 }

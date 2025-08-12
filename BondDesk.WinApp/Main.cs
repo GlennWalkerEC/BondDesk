@@ -35,7 +35,7 @@ public partial class BondDesk : Form
 		_filterDirtyPriceTextBox.TextChanged += (s, e) => UpdateBondPanels();
 		_filterPresentValueOverDirtyTextBox.TextChanged += (s, e) => UpdateBondPanels();
 		_filterModifiedDurationTextBox.TextChanged += (s, e) => UpdateBondPanels();
-		_filterDV1KQTextBox.TextChanged += (s, e) => UpdateBondPanels();
+		_filterDV1KGBPTextBox.TextChanged += (s, e) => UpdateBondPanels();
 		_filterPresentValueTextBox.TextChanged += (s, e) => UpdateBondPanels();
 
 		Load += Form1_Load;
@@ -67,7 +67,7 @@ public partial class BondDesk : Form
 				DirtyPrice = bond.DirtyPrice,
 				CurrentYield = bond.CurrentYield,
 				AccruedInterest = bond.AccruedInterest,
-				DV1KQ = bond.DV1KQ,
+				DV1KGBP = bond.DV1KGBP,
 				ModifiedDuration = bond.ModifiedDuration,
 				PresentValueOverDirty = bond.PresentValueOverDirty,
 				YieldToMaturity = bond.YieldToMaturity,
@@ -110,13 +110,13 @@ public partial class BondDesk : Form
 		_filterDirtyPriceTextBox.PlaceholderText = "Dirty";
 		_filterPresentValueOverDirtyTextBox.PlaceholderText = "PV/Dirty";
 		_filterModifiedDurationTextBox.PlaceholderText = "Modified Duration";
-		_filterDV1KQTextBox.PlaceholderText = "DV1KQ";
+		_filterDV1KGBPTextBox.PlaceholderText = "DV1KGBP";
 		_filterPresentValueTextBox.PlaceholderText = "Present Value";
 
 		TextBox[] filters = {
 			_filterEpicTextBox, _filterNameTextBox, _filterMaturityDateTextBox, _filterAccruedInterestTextBox, _filterCouponTextBox,
 			_filterYieldToMaturityTextBox, _filterCurrentYieldTextBox, _filterDirtyPriceTextBox, _filterPresentValueOverDirtyTextBox,
-			_filterModifiedDurationTextBox, _filterDV1KQTextBox, _filterPresentValueTextBox
+			_filterModifiedDurationTextBox, _filterDV1KGBPTextBox, _filterPresentValueTextBox
 		};
 		foreach (var tb in filters)
 		{
@@ -141,7 +141,7 @@ public partial class BondDesk : Form
 			 // New order of filter textboxes
 			_filterEpicTextBox, _filterNameTextBox, _filterMaturityDateTextBox, _filterAccruedInterestTextBox, _filterCouponTextBox,
 			_filterYieldToMaturityTextBox, _filterCurrentYieldTextBox, _filterDirtyPriceTextBox, _filterPresentValueOverDirtyTextBox,
-			_filterModifiedDurationTextBox, _filterDV1KQTextBox, _filterPresentValueTextBox
+			_filterModifiedDurationTextBox, _filterDV1KGBPTextBox, _filterPresentValueTextBox
 		};
 		for (int i = 0; i < filters.Length; i++)
 		{
@@ -194,7 +194,7 @@ public partial class BondDesk : Form
 			(string.IsNullOrWhiteSpace(_filterDirtyPriceTextBox.Text) || FilterDecimal(b.DirtyPrice, _filterDirtyPriceTextBox.Text)) &&
 			(string.IsNullOrWhiteSpace(_filterPresentValueOverDirtyTextBox.Text) || FilterDecimal(b.PresentValueOverDirty, _filterPresentValueOverDirtyTextBox.Text)) &&
 			(string.IsNullOrWhiteSpace(_filterModifiedDurationTextBox.Text) || FilterDecimal(b.ModifiedDuration, _filterModifiedDurationTextBox.Text)) &&
-			(string.IsNullOrWhiteSpace(_filterDV1KQTextBox.Text) || FilterDecimal(b.DV1KQ, _filterDV1KQTextBox.Text)) &&
+			(string.IsNullOrWhiteSpace(_filterDV1KGBPTextBox.Text) || FilterDecimal(b.DV1KGBP, _filterDV1KGBPTextBox.Text)) && 
 			(string.IsNullOrWhiteSpace(_filterPresentValueTextBox.Text) || FilterDecimal(b.PresentValue, _filterPresentValueTextBox.Text))
 		).ToList();
 
@@ -223,7 +223,7 @@ public partial class BondDesk : Form
 			("DirtyPrice", "Dirty", textDecimal),
 			("PresentValueOverDirty", "NPV/Dirty", textDecimal),
 			("ModifiedDuration", "Modified Duration", textDecimal),
-			("DV1KQ", "DV1KQ", textDecimal),
+			("DV1KGBP", "DV1KGBP", textDecimal),
 			("PresentValue", "Present Value", textPV)
 		};
 		// Header row
@@ -257,7 +257,7 @@ public partial class BondDesk : Form
 		var maxModDuration = filtered.Any() ? filtered.Min(x => x.ModifiedDuration) : 0m;
 		var maxPvDirty = filtered.Any() ? filtered.Max(x => x.PresentValueOverDirty) : 0m;
 		var maxYield = filtered.Any() ? filtered.Max(x => x.CurrentYield) : 0m;
-		var maxDV1K = filtered.Any() ? filtered.Max(x => x.DV1KQ) : 0m;
+		var maxDV1K = filtered.Any() ? filtered.Max(x => x.DV1KGBP) : 0m;
 		var minDirty = filtered.Any() ? filtered.Min(x => x.DirtyPrice) : 0m;
 		var minAcc = filtered.Any() ? filtered.Min(x => x.AccruedInterest) : 0m;
 
@@ -369,11 +369,11 @@ public partial class BondDesk : Form
 				},
 				new Label
 				{
-					Text = bond.DV1KQ.ToString("F4", CultureInfo.InvariantCulture),
+					Text = bond.DV1KGBP.ToString("F4", CultureInfo.InvariantCulture),
 					Width = labelWidth,
 					AutoSize = false,
 					ForeColor = textDecimal,
-					Font = bond.DV1KQ == maxDV1K ? underline : font,
+					Font = bond.DV1KGBP == maxDV1K ? underline : font,
 					BackColor = panelBg,
 					TextAlign = System.Drawing.ContentAlignment.MiddleCenter
 				},
@@ -463,7 +463,7 @@ public class BondViewModel
 	public decimal DirtyPrice { get; set; }
 	public decimal CurrentYield { get; set; }
 	public decimal AccruedInterest { get; set; }
-	public decimal DV1KQ { get; set; }
+	public decimal DV1KGBP { get; set; }
 	public decimal ModifiedDuration { get; set; }
 	public decimal PresentValueOverDirty { get; set; }
 	public decimal YieldToMaturity { get; set; }

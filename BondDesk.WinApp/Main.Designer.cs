@@ -14,7 +14,7 @@ partial class BondDesk
     private System.Windows.Forms.TextBox _filterDirtyPriceTextBox;
     private System.Windows.Forms.TextBox _filterCurrentYieldTextBox;
     private System.Windows.Forms.TextBox _filterAccruedInterestTextBox;
-    private System.Windows.Forms.TextBox _filterDV1KQTextBox;
+    private System.Windows.Forms.TextBox _filterDV1KGBPTextBox;
     private System.Windows.Forms.TextBox _filterModifiedDurationTextBox;
     private System.Windows.Forms.TextBox _filterPresentValueOverDirtyTextBox;
     private System.Windows.Forms.TextBox _filterYieldToMaturityTextBox;
@@ -50,7 +50,7 @@ partial class BondDesk
 		_filterDirtyPriceTextBox = new TextBox();
 		_filterCurrentYieldTextBox = new TextBox();
 		_filterAccruedInterestTextBox = new TextBox();
-		_filterDV1KQTextBox = new TextBox();
+		_filterDV1KGBPTextBox = new TextBox();
 		_filterModifiedDurationTextBox = new TextBox();
 		_filterPresentValueOverDirtyTextBox = new TextBox();
 		_filterYieldToMaturityTextBox = new TextBox();
@@ -132,10 +132,10 @@ partial class BondDesk
 		// 
 		// _filterDV1KTextBox
 		// 
-		_filterDV1KQTextBox.Location = new Point(0, 0);
-		_filterDV1KQTextBox.Name = "_filterDV1KTextBox";
-		_filterDV1KQTextBox.Size = new Size(100, 23);
-		_filterDV1KQTextBox.TabIndex = 10;
+		_filterDV1KGBPTextBox.Location = new Point(0, 0);
+		_filterDV1KGBPTextBox.Name = "_filterDV1KTextBox";
+		_filterDV1KGBPTextBox.Size = new Size(100, 23);
+		_filterDV1KGBPTextBox.TabIndex = 10;
 		// 
 		// _filterPresentValueTextBox
 		// 
@@ -155,7 +155,7 @@ partial class BondDesk
 		_filterSortPanel.Controls.Add(_filterDirtyPriceTextBox);
 		_filterSortPanel.Controls.Add(_filterCurrentYieldTextBox);
 		_filterSortPanel.Controls.Add(_filterAccruedInterestTextBox);
-		_filterSortPanel.Controls.Add(_filterDV1KQTextBox);
+		_filterSortPanel.Controls.Add(_filterDV1KGBPTextBox);
 		_filterSortPanel.Controls.Add(_filterModifiedDurationTextBox);
 		_filterSortPanel.Controls.Add(_filterPresentValueOverDirtyTextBox);
 		_filterSortPanel.Controls.Add(_filterYieldToMaturityTextBox);
