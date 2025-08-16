@@ -299,7 +299,7 @@ public partial class BondDesk : Form
 				},
 				new Label
 				{
-					Text = bond.AccruedInterest.ToString("F4", CultureInfo.InvariantCulture),
+					Text = bond.AccruedInterest.ToString("C4", CultureInfo.CurrentCulture),
 					Width = labelWidth,
 					AutoSize = false,
 					ForeColor = textDecimal,
@@ -339,7 +339,7 @@ public partial class BondDesk : Form
 				},
 				new Label
 				{
-					Text = bond.DirtyPrice.ToString("F4", CultureInfo.InvariantCulture),
+					Text = bond.DirtyPrice.ToString("C4", CultureInfo.CurrentCulture),
 					Width = labelWidth,
 					AutoSize = false,
 					ForeColor = textDecimal,
@@ -369,7 +369,7 @@ public partial class BondDesk : Form
 				},
 				new Label
 				{
-					Text = bond.DV1KGBP.ToString("F4", CultureInfo.InvariantCulture),
+					Text = bond.DV1KGBP.ToString("C4", CultureInfo.CurrentCulture),
 					Width = labelWidth,
 					AutoSize = false,
 					ForeColor = textDecimal,
@@ -393,7 +393,7 @@ public partial class BondDesk : Form
 				labels[i].Left = left;
 				labels[i].Top = 8;
 				panel.Controls.Add(labels[i]);
-				_bondToolTip.SetToolTip(labels[i], bond.ToolTipText); // Attach tooltip to each label
+				_bondToolTip.SetToolTip(labels[i], bond.ToolTipText);
 				left += labelWidth + labelSpacing;
 			}
 			_bondsPanel.Controls.Add(panel);

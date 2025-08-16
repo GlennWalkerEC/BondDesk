@@ -236,7 +236,7 @@ public class Bond : IGiltInfo, IBondEntity
 
 	private decimal CalculateDV1KGBP()
 	{
-	    return ((ModifiedDuration * OfferPrice) * (1000 / OfferPrice)) / 1000m;
+	    return ((ModifiedDuration * OfferPrice) * (1000 / OfferPrice)) / 10000m;
 	}
 
 	public override string ToString()
