@@ -19,7 +19,7 @@ public class Gilts : IGiltRepo
 	public async IAsyncEnumerable<IGiltInfo> GetAllGiltsAsync()
 	{
 		// Sourced from https://giltsyield.com/bond/ as of June 2024
-		yield return new GiltInfo("T25", "GB00BTHH2R79", "2% Treasury Gilt 2025", 2.00m, new DateTime(2025, 9, 7), new DateTime(2015, 3, 20));
+		//yield return new GiltInfo("T25", "GB00BTHH2R79", "2% Treasury Gilt 2025", 2.00m, new DateTime(2025, 9, 7), new DateTime(2015, 3, 20));
 		yield return new GiltInfo("TY25", "GB00BPCJD880", "3½% Treasury Gilt 2025", 3.50m, new DateTime(2025, 10, 22), new DateTime(2023, 1, 18));
 		yield return new GiltInfo("T26", "GB00BL68HJ26", "0 1/8% Treasury Gilt 2026", 0.125m, new DateTime(2026, 1, 30), new DateTime(2020, 6, 3));
 		yield return new GiltInfo("TG26", "GB00BYZW3G56", "1½% Treasury Gilt 2026", 1.50m, new DateTime(2026, 7, 22), new DateTime(2016, 2, 18));
