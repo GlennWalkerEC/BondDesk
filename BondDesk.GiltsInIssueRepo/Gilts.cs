@@ -20,7 +20,7 @@ public class Gilts : IGiltRepo
 	{
 		// Sourced from https://giltsyield.com/bond/ as of June 2024
 		//yield return new GiltInfo("T25", "GB00BTHH2R79", "2% Treasury Gilt 2025", 2.00m, new DateTime(2025, 9, 7), new DateTime(2015, 3, 20));
-		yield return new GiltInfo("TY25", "GB00BPCJD880", "3½% Treasury Gilt 2025", 3.50m, new DateTime(2025, 10, 22), new DateTime(2023, 1, 18));
+		//yield return new GiltInfo("TY25", "GB00BPCJD880", "3½% Treasury Gilt 2025", 3.50m, new DateTime(2025, 10, 22), new DateTime(2023, 1, 18));
 		yield return new GiltInfo("T26", "GB00BL68HJ26", "0 1/8% Treasury Gilt 2026", 0.125m, new DateTime(2026, 1, 30), new DateTime(2020, 6, 3));
 		yield return new GiltInfo("TG26", "GB00BYZW3G56", "1½% Treasury Gilt 2026", 1.50m, new DateTime(2026, 7, 22), new DateTime(2016, 2, 18));
 		yield return new GiltInfo("T26A", "GB00BNNGP668", "0 3/8% Treasury Gilt 2026", 0.375m, new DateTime(2026, 10, 22), new DateTime(2021, 3, 3));
@@ -50,6 +50,7 @@ public class Gilts : IGiltRepo
 		yield return new GiltInfo("TR34", "GB00B52WS153", "4½% Treasury Gilt 2034", 4.50m, new DateTime(2034, 9, 7), new DateTime(2009, 6, 17));
 		yield return new GiltInfo("T35", "GB00BT7J0027", "4½% Treasury Gilt 2035", 4.50m, new DateTime(2035, 3, 7), new DateTime(2025, 2, 12));
 		yield return new GiltInfo("TG35", "GB00BMGR2916", "0 5/8% Treasury Gilt 2035", 0.625m, new DateTime(2035, 7, 31), new DateTime(2020, 9, 9));
+		yield return new GiltInfo("T35V", "GB00BTXS1K06", "4¾% Treasury Gilt 2035", 4.75m, new DateTime(2035, 10, 22), new DateTime(2025, 9, 3));
 		yield return new GiltInfo("T4Q", "GB0032452392", "4¼% Treasury Stock 2036", 4.25m, new DateTime(2036, 3, 7), new DateTime(2003, 2, 27));
 		yield return new GiltInfo("TG37", "GB00BZB26Y51", "1¾% Treasury Gilt 2037", 1.75m, new DateTime(2037, 9, 7), new DateTime(2016, 11, 9));
 		yield return new GiltInfo("TG38", "GB00BQC4R999", "3¾% Treasury Gilt 2038", 3.75m, new DateTime(2038, 1, 29), new DateTime(2022, 11, 9));
