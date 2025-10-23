@@ -45,9 +45,11 @@ public class Bond : IGiltInfo, IBondEntity
 	public string Epic => _giltInfo.Epic ?? throw new InvalidOperationException("Epic cannot be null.");
 	public decimal Tenor => (_giltInfo.MaturityDate - _dateTimeProvider.GetToday()).Days / 365m;
 
-	
+	public decimal BidPrice => Valuation.Bid ?? Valuation.LastPrice ?? throw new NullReferenceException("LastPrice");
+	public decimal? BidQty => Valuation.BidQty;
 	public decimal OfferPrice => Valuation.Offer ?? Valuation.LastPrice ?? throw new NullReferenceException("LastPrice");
 	public decimal? OfferQty => Valuation.OfferQty;
+	public decimal Spread => OfferPrice - BidPrice;
 	public decimal MarketSize => Valuation.MarketSize ?? 0m;
 	public decimal? LastPrice => Valuation.LastPrice;
 	public decimal? Mid => Valuation.Mid;
@@ -248,8 +250,11 @@ public class Bond : IGiltInfo, IBondEntity
 		sb.AppendLine($"{nameof(MaturityDate)}: {MaturityDate}");
 		sb.AppendLine($"{nameof(Tenor)}: {Tenor}");
 		sb.AppendLine($"{nameof(DaysSinceLastCoupon)}: {DaysSinceLastCoupon}");
+		sb.AppendLine($"{nameof(BidPrice)}: {BidPrice}");
+		sb.AppendLine($"{nameof(BidQty)}: {BidQty}");
 		sb.AppendLine($"{nameof(OfferPrice)}: {OfferPrice}");
 		sb.AppendLine($"{nameof(OfferQty)}: {OfferQty}");
+		sb.AppendLine($"{nameof(Spread)}: {Spread}");
 		sb.AppendLine($"{nameof(MarketSize)}: {MarketSize}");
 		sb.AppendLine($"{nameof(AccruedDays)}: {AccruedDays}");
 		sb.AppendLine($"{nameof(DaysSinceLastPayment)}: {DaysSinceLastPayment}");
