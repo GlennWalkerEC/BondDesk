@@ -36,6 +36,7 @@ public class Gilts : IGiltRepo
 		yield return new GiltInfo("TG29", "GB00BLPK7227", "0½% Treasury Gilt 2029", 0.50m, new DateTime(2029, 1, 31), new DateTime(2021, 9, 2));
 		yield return new GiltInfo("TS29", "GB00BQC82B83", "4 1/8% Treasury Gilt 2029", 4.125m, new DateTime(2029, 7, 22), new DateTime(2024, 5, 1));
 		yield return new GiltInfo("TR29", "GB00BJMHB534", "0 7/8% Treasury Gilt 2029", 0.875m, new DateTime(2029, 10, 22), new DateTime(2019, 6, 19));
+		yield return new GiltInfo("T29K", "GB00BVP99566", "4% Treasury Gilt 2029", 4.00m, new DateTime(2029, 5, 22), new DateTime(2025, 10, 9));
 		yield return new GiltInfo("T30", "GB00BSQNRD01", "4 3/8% Treasury Gilt 2030", 4.375m, new DateTime(2030, 3, 7), new DateTime(2025, 1, 9));
 		yield return new GiltInfo("TG30", "GB00BL68HH02", "0 3/8% Treasury Gilt 2030", 0.375m, new DateTime(2030, 10, 22), new DateTime(2020, 5, 13));
 		yield return new GiltInfo("TR30", "GB00B24FF097", "4¾% Treasury Gilt 2030", 4.75m, new DateTime(2030, 12, 7), new DateTime(2007, 10, 3));
@@ -60,6 +61,7 @@ public class Gilts : IGiltRepo
 		yield return new GiltInfo("TG40", "GB00BQC82D08", "4 3/8% Treasury Gilt 2040", 4.375m, new DateTime(2040, 1, 31), new DateTime(2024, 9, 4));
 		yield return new GiltInfo("T40", "GB00B6460505", "4¼% Treasury Gilt 2040", 4.25m, new DateTime(2040, 12, 7), new DateTime(2010, 6, 30));
 		yield return new GiltInfo("TG41", "GB00BJQWYH73", "1¼ % Treasury Gilt 2041", 1.25m, new DateTime(2041, 10, 22), new DateTime(2020, 1, 22));
+		yield return new GiltInfo("T41F", "GB00BVP99897", "5¼% Treasury Gilt 2041", 5.25m, new DateTime(2041, 1, 31), new DateTime(2025, 10, 15));
 		yield return new GiltInfo("T42", "GB00B1VWPJ53", "4½% Treasury Gilt 2042", 4.50m, new DateTime(2042, 12, 7), new DateTime(2007, 6, 6));
 		yield return new GiltInfo("TR43", "GB00BPJJKP77", "4¾% Treasury Gilt 2043", 4.75m, new DateTime(2043, 10, 22), new DateTime(2023, 11, 16));
 		yield return new GiltInfo("TG44", "GB00B84Z9V04", "3¼% Treasury Gilt 2044", 3.25m, new DateTime(2044, 1, 22), new DateTime(2012, 10, 24));
